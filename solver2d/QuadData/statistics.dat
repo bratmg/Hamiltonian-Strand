@@ -1,0 +1,27 @@
+#####################################################################
+#                                                                   #
+#   STATISTICS: MESH GEN WITH HAMILTONIAN LOOPS AND STRAND GRIDS    #
+#                                                                   #
+#####################################################################
+
+ General statistics:
+   Number of input nodes:        925
+   Number total nodes per layer: 83608
+   Number of quads:              83136
+   Number of quad edges:         166744
+
+ 2d mesh quality statistics:
+   Cell skewness (0.00-0.25):   74376
+   Cell skewness (0.25-0.50):   8616
+   Cell skewness (0.50-0.80):   144
+   Cell skewness (0.80-0.95):   0
+   Cell skewness (0.95-0.99):   0
+   Cell skewness (0.99-1.00):   0
+
+ Memory statistics:
+
+#####################################################################
+#                                                                   #
+#                          END OF FILE                              #
+#                                                                   #
+#####################################################################

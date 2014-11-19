@@ -1,0 +1,48 @@
+Mach=0.8
+alpha=1.25
+rey=60000
+scheme=line-Gauss-Seidel
+time integration=bdf2
+order=3
+timeacc=0
+nsteps=5000
+nwrite=1000
+dt=0.01
+CFL=30.0
+msweep=1
+visc=0
+testcase=0
+(periodic bc: user should set mid points(x,y)of the grid at periodic_bc.c)
+
+////////////////////////////////////
+/////// input description //////////
+////////////////////////////////////
+order 1 : 1st order 
+order 3 : muscl
+order 5 : weno 5th
+
+scheme for inversion:
+1. euler
+2. rk3
+3. ADI
+4. Gauss-Seidel (x)
+5. line-Gauss-Seidel 
+
+time integration:
+1. bdf1
+2. bdf2
+
+timeacc:
+1. 0
+2. 1
+
+msweep:(It may be grid smoothing?)
+
+
+visc:
+1. 0(inviscid)
+2. 1(viscid)
+
+testcase: 1. isentropic vortex (periodic bc)
+          0. naca test (solid bc)
+/////////////////////////////

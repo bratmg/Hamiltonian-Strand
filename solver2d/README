@@ -1,0 +1,48 @@
+#####################################################################
+#                                                                   #
+#            README FILE TO USE 2D SOLVER FOR HAM CODE              # 
+#                                                                   #
+#####################################################################
+Author: Jayanarayanan Sitaraman (jsitaram@uwyo.edu)
+        Bharath Govindarajan    (bharath@umd.edu)
+        Yong Su Jung            (jung9053@umd.edu)
+
+To build:
+---------
+make
+
+Test case:
+----------
+- Currently 'input.ham2d' file configured to compute the transonic flow
+  around the NACA 0012 airfoil at M = 0.8 and AoA = 1.25
+- ./ham2d
+
+Provided scripts:
+-----------------
+- 'execute.sh' 
+  - clears old data, builds the code, waits on user input to proceed 
+    (in the event that compilation causes errors), and executes the code
+
+- 'preplot.sh'
+  - converts the relevant tecplot file from ASCII to binary to 
+    facilitate faster read-in using Tecplot
+  - Currently, the user is required to set the path of the Tecplot
+    preplot (usually /usr/local/Tecplot/preplot) executable manaually
+    in preplot.sh
+
+To view results:
+----------------
+- All results are stored in './output/' as .dat or .tecdat files
+  - .dat files are those needed by the solver 
+  - .tecdat are files used by 'preplot.sh' and are converted to '.plt'
+    and stored in './output/preplot/' from where they can be visualized
+
+Input files:
+------------
+- 'input.ham2d' is the main input file
+
+
+
+#####################################################################
+#                           END OF FILE                             #
+#####################################################################

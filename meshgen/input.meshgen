@@ -1,0 +1,46 @@
+// ##################################################################
+//
+// Input file for mesh generation routine
+//
+// ##################################################################
+num grid      = 1
+node file     = ./input/coordNACA.dat
+conn file     = ./input/connNACA.dat
+flush surface = naca
+quad level    = 2
+num smooth    = 200
+if strands    = 0
+strand layers = 35
+init spacing  = 0.05
+mesh growth   = 1.1
+
+// ##################################################################
+// NOTES 
+// ##################################################################
+ - 'num grid'  - number of grids
+
+ - 'node file' - triangular coordinate data file.
+
+ - 'conn file' - triangular connectivity data file.
+
+ - 'flush surface' - surface onto which newly added points have
+   to be flushed to. Current options are 'naca' and 'sphere'. If 
+   using any other file, ensure that this field is set to anything
+   BUT 'naca' or 'sphere', say 'none'.
+ 
+ - 'quad level' - level of division of the quad cells. Default to 1.
+ 
+ - 'num smooth' - number of times the Lagrangian smoothing of the
+   nodes are performed.
+
+ - 'if strands' = 1 (yes strand grid) or = 0 (no strand grids)
+
+ - 'strand layers' - set to min of 2 by default. Therefore, 
+   (n) strand layers imply (n-1) cells in the strand direction
+
+ - 'init spacing' - initial spacing of the cell in the strand direction
+
+ - 'mesh growth' - strand grid stretching ratio
+// ##################################################################
+// END OF FILE
+// ##################################################################

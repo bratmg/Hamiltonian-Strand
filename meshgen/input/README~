@@ -1,0 +1,31 @@
+#####################################################################
+#                                                                   #
+#               DESCRIPTION OF CERTAIN INPUT FILES                  # 
+#                                                                   #
+#####################################################################
+Code written by Bharath Govindarajan (bharath@umd.edu)
+
+ - The folder contain 'coord__.dat' (triangle node points) and 
+   'conn__.dat' (triangle connectivity information) files of 
+   certain geometries. 
+ - To be used in 'input.meshgen'
+
+ Input files
+-------------
+ NACA.dat   - NACA 0012 airfoil
+ Robin.dat  - Robin fuselage
+ SphereLVL0 - Geodesic grid of sphere (  20 triangle sphere)
+ SphereLVL1 - Geodesic grid of sphere (  80 triangle sphere)
+ SphereLVL2 - Geodesic grid of sphere ( 320 triangle sphere)
+ SphereLVL3 - Geodesic grid of sphere (1280 triangle sphere)
+
+ The following are used to test isentropic vortex with periodic BC
+ which represent a square domain with isoceles triangles
+
+ SquareVtxIsoQL1 - fine grid used typically with quad level 1
+ SquareVtxIsoQL2 - fine grid used typically with quad level 2
+ SquareVtxIsoQL3 - fine grid used typically with quad level 3
+
+#####################################################################
+#                           END OF FILE                             #
+#####################################################################

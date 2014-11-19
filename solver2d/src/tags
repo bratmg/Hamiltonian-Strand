@@ -1,0 +1,184 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+111	jac_roe.f90	/^111 continue$/;"	l	subroutine:jac_roe	file:
+A	ham2dtypes.h	/^  double ***A;$/;"	m	struct:GRID
+ADI	ADI.c	/^void ADI(GRID *g,SOLN *s,double cflnum,double dt)$/;"	f
+B	ham2dtypes.h	/^  double ***B;$/;"	m	struct:GRID
+BDF1	ham2dFunctionDefs.h	9;"	d
+BDF2	ham2dFunctionDefs.h	10;"	d
+C	ham2dtypes.h	/^  double ***C;$/;"	m	struct:GRID
+CC	makefile	/^CC  = gcc$/;"	m
+CFL	ham2dtypes.h	/^  double CFL;    \/\/ nominal CFL number$/;"	m	struct:GRID
+CFLAGS	makefile	/^CFLAGS =  -w -O2 -fbacktrace -fbounds-check  #-g #-traceback  -check uninit  #-warn-all#-g #-O2 #-g$/;"	m
+CFLMAX	ham2dFunctionDefs.h	14;"	d
+CHK	ham2dFunctionDefs.h	17;"	d
+D	ham2dtypes.h	/^  double ***D;   \/\/ diagonal matrix$/;"	m	struct:SOLN
+DADI	DADI.c	/^void DADI(GRID *g,SOLN *s,double cflnum,double dt)$/;"	f
+F	ham2dtypes.h	/^  double **F;$/;"	m	struct:GRID
+F90	makefile	/^F90 = gfortran$/;"	m
+FFLAGS	makefile	/^FFLAGS  =  -w -O2 -lgfortran -fdefault-real-8 # uncomment this for gfortran$/;"	m
+GRID	ham2dtypes.h	/^typedef struct GRID$/;"	s
+GRID	ham2dtypes.h	/^} GRID;$/;"	t	typeref:struct:GRID
+LFLAGS	makefile	/^LFLAGS =$(CFLAGS) -lm$/;"	m
+NQ	ADI.c	6;"	d	file:
+NQ	DADI.c	6;"	d	file:
+NQ	findDiagonals.c	5;"	d	file:
+NQ	gaussSeidel.c	6;"	d	file:
+NQ	initflow.c	13;"	d	file:
+NQ	lineGaussSeidel.c	6;"	d	file:
+NQ	lineGaussSeidel1.c	6;"	d	file:
+NQ	readGrid.c	22;"	d	file:
+NVAR	ham2dFunctionDefs.h	11;"	d
+OBJECTS	makefile	/^OBJECTS = ham2d.o readGrid.o preprocess.o find_faces.o\\$/;"	m
+Q	ham2dtypes.h	/^  double **Q;$/;"	m	struct:GRID
+RAMPEND	ham2dFunctionDefs.h	16;"	d
+RAMPSTART	ham2dFunctionDefs.h	15;"	d
+REAL	mathops.c	3;"	d	file:
+REAL	triSolvers.c	4;"	d	file:
+SOLN	ham2dtypes.h	/^typedef struct SOLN$/;"	s
+SOLN	ham2dtypes.h	/^} SOLN;$/;"	t	typeref:struct:SOLN
+TOL	ham2dFunctionDefs.h	12;"	d
+TWOTHIRD	ham2dFunctionDefs.h	8;"	d
+addTemporalSource	addTemporalSource.c	/^void addTemporalSource(GRID *g, SOLN *s,double cflnum, double dt, int istep)$/;"	f
+alpha	ham2dtypes.h	/^  double mach,alpha,rey;$/;"	m	struct:SOLN
+axb	mathops.c	/^void axb(REAL A[4][4],REAL *x,REAL *x0,REAL *b,REAL fac,int N)$/;"	f
+axb1	mathops.c	/^void axb1(REAL A[4][4],REAL *x,REAL *b,REAL fac,int N)$/;"	f
+bfaces	ham2dtypes.h	/^  int    *bfaces; \/\/ list of boundary faces$/;"	m	struct:GRID
+blockInv	triSolvers.c	/^void blockInv(REAL ***a,REAL ***b, REAL ***c,REAL **f, int N,int nq)  {$/;"	f
+blockTridag	triSolvers.c	/^void blockTridag(REAL ***a,REAL ***b, REAL ***c,REAL **f, int N,int nq)  $/;"	f
+blockTridag4	triSolvers.c	/^void blockTridag4(REAL ***a,REAL ***b, REAL ***c,REAL **f, int N,int nq)  $/;"	f
+blockTridagPeriodic	triSolvers.c	/^void blockTridagPeriodic(REAL ***a,REAL ***b, REAL ***c,REAL **f, int N,int nq)  $/;"	f
+blockTridagPeriodic4	triSolvers.c	/^void blockTridagPeriodic4(REAL ***a,REAL ***b, REAL ***c,REAL **f, int N,int nq)  $/;"	f
+c2b	ham2dtypes.h	/^  double gm1,c2b,rgas,pr,prtr;$/;"	m	struct:SOLN
+c2chain	ham2dtypes.h	/^  int    *c2chain;$/;"	m	struct:GRID
+c2f	ham2dtypes.h	/^  int    *c2f;$/;"	m	struct:GRID
+cd	ham2dtypes.h	/^  double cl,cd,cy,cx;$/;"	m	struct:SOLN
+cflnum	ham2dtypes.h	/^  double cflnum;$/;"	m	struct:SOLN
+chainConn	ham2dtypes.h	/^  int    *chainConn;         \/\/ face connectivity for each chain$/;"	m	struct:GRID
+chainsPerColor	ham2dtypes.h	/^  int    *chainsPerColor;    \/\/ number of chains per color$/;"	m	struct:GRID
+cindx	ham2dtypes.h	/^  int    *cindx;$/;"	m	struct:GRID
+cl	ham2dtypes.h	/^  double cl,cd,cy,cx;$/;"	m	struct:SOLN
+computeForce	computeForce.c	/^void computeForce(GRID *g,SOLN *s)$/;"	f
+computeLinearRHS	computeLinearRHS.c	/^void computeLinearRHS(GRID *g,SOLN *s,double cflnum,double *l2rho)$/;"	f
+computeRHS	computeRHS.c	/^void computeRHS(GRID *g,SOLN *s,double *l2rho)$/;"	f
+computeRHSk	computeRHSk.c	/^void computeRHSk(GRID *g,SOLN *s,double *l2rho)$/;"	f
+computeRHSkv	computeRHSkv.c	/^void computeRHSkv(GRID *g,SOLN *s,double *l2rho)$/;"	f
+computeTimeScaling	computeTimeScaling.c	/^void computeTimeScaling(GRID *g, SOLN *s,double cflnum,double dt,int istep)$/;"	f
+conn	ham2dtypes.h	/^  int    *conn;              \/\/ connectivity of nodes$/;"	m	struct:GRID
+conn	test_faces.f90	/^  integer, allocatable :: conn(/;"	v	program:test_faces
+ctype	ham2dtypes.h	/^  int    *ctype;$/;"	m	struct:GRID
+cx	ham2dtypes.h	/^  double cl,cd,cy,cx;$/;"	m	struct:SOLN
+cy	ham2dtypes.h	/^  double cl,cd,cy,cx;$/;"	m	struct:SOLN
+ddq	ham2dtypes.h	/^  double *ddq;   \/\/ \\delta\\delta q - variables [rho rho*u rho*v e]$/;"	m	struct:SOLN
+ddqb	ham2dtypes.h	/^  double *ddqb;  \/\/ \\delta\\delta q - variables [rho rho*u rho*v e]$/;"	m	struct:SOLN
+ddqf	ham2dtypes.h	/^  double *ddqf;  \/\/ \\delta\\delta q - variables [rho rho*u rho*v e]$/;"	m	struct:SOLN
+deg2rad	ham2dFunctionDefs.h	7;"	d
+deps	stepSolution.c	14;"	d	file:
+df	ham2dtypes.h	/^  double **df;$/;"	m	struct:GRID
+dq	ham2dtypes.h	/^  double *dq;    \/\/ \\delta q -variables [rho rho*u rho*v e]$/;"	m	struct:SOLN
+dql	ham2dtypes.h	/^  double **dql;$/;"	m	struct:GRID
+dqr	ham2dtypes.h	/^  double **dqr;$/;"	m	struct:GRID
+dtac	ham2dtypes.h	/^  double *dtac;  \/\/ time scaling - nominally equaly to dt\/dv but can be $/;"	m	struct:SOLN
+einf	ham2dtypes.h	/^  double uinf,vinf,einf;$/;"	m	struct:SOLN
+f	ham2dtypes.h	/^  double **f;$/;"	m	struct:GRID
+f2	ham2dtypes.h	/^  double **f2;$/;"	m	struct:GRID
+faceMat	ham2dtypes.h	/^typedef struct faceMat$/;"	s
+faceMat	ham2dtypes.h	/^} faceMat;$/;"	t	typeref:struct:faceMat
+faceStartPerChain	ham2dtypes.h	/^  int    *faceStartPerChain; \/\/ number of faces per chain$/;"	m	struct:GRID
+faces	ham2dtypes.h	/^  int    *faces;  \/\/ list of faces$/;"	m	struct:GRID
+faces	test_faces.f90	/^  integer, allocatable :: faces(/;"	v	program:test_faces
+ff	ham2dtypes.h	/^  faceMat *ff;$/;"	m	struct:GRID
+findDiagonals	findDiagonals.c	/^void findDiagonals(GRID *g, SOLN *s,double cflnum,double dt)$/;"	f
+find_edges	find_faces1.c	/^void find_edges(int *conn,int *neig,int *faces,int *ncells,int *nv)$/;"	f
+find_faces	find_faces.c	/^void find_faces(int *bface,$/;"	f
+find_faces	find_faces1.c	/^void find_faces(int *bface,$/;"	f
+flux_roe	flux_roe.f90	/^subroutine flux_roe(/;"	s
+flux_roe2d	flux_roe2d.f90	/^subroutine flux_roe2d(/;"	s
+flux_visc	flux_visc.f90	/^subroutine flux_visc(/;"	s
+flux_visc_2d	flux_visc.f90	/^subroutine flux_visc_2d(/;"	s
+fv	ham2dtypes.h	/^  double **fv;$/;"	m	struct:GRID
+gamm	ham2dFunctionDefs.h	5;"	d
+gaussSeidel	gaussSeidel.c	/^void gaussSeidel(GRID *g,SOLN *s,double cflnum,double dt)$/;"	f
+gm1	ham2dtypes.h	/^  double gm1,c2b,rgas,pr,prtr;$/;"	m	struct:SOLN
+initflow	initflow.c	/^void initflow(GRID *g,SOLN *s)$/;"	f
+insert_edge	find_faces.c	/^void insert_edge(int cellindx,int faceindx,$/;"	f
+insert_edge	find_faces1.c	/^void insert_edge(int cellindx,int faceindx,$/;"	f
+invertMat4	mathops.c	/^void invertMat4(REAL A[4][4],$/;"	f
+invertMat5	mathops.c	/^void invertMat5(REAL A[5][5],$/;"	f
+itag	ham2dtypes.h	/^  int *itag;$/;"	m	struct:SOLN
+jac_roe	jac_roe.f90	/^subroutine jac_roe(/;"	s
+jac_roe2d	jac_roe.f90	/^subroutine jac_roe2d(/;"	s
+jac_visc	jac_visc.F90	/^subroutine jac_visc(/;"	s
+jac_visc_2d	jac_visc.F90	/^subroutine jac_visc_2d(/;"	s
+l2norm	ham2dtypes.h	/^  double l2norm;$/;"	m	struct:SOLN
+lineGaussSeidel	lineGaussSeidel.c	/^void lineGaussSeidel(GRID *g,SOLN *s,double cflnum,double dt)$/;"	f
+lineGaussSeidel1	lineGaussSeidel1.c	/^void lineGaussSeidel1(GRID *g,SOLN *s,double cflnum,double dt)$/;"	f
+lmat	ham2dtypes.h	/^  double lmat[4][4];$/;"	m	struct:faceMat
+mach	ham2dtypes.h	/^  double mach,alpha,rey;$/;"	m	struct:SOLN
+main	ham2d.c	/^int main()$/;"	f
+main	mathops.c	/^int main()$/;"	f
+matInv5	triSolvers.c	/^void matInv5(REAL *f1, REAL *f2, REAL *f3,REAL *f4,REAL *f5,int nq)  {$/;"	f
+max	ham2dtypes.h	99;"	d
+min	ham2dtypes.h	100;"	d
+msweep	ham2dtypes.h	/^  int    msweep;$/;"	m	struct:GRID
+muscld	muscld.c	/^void muscld(double **f, \/\/ array of cons. fluxes at each edge$/;"	f
+muscld_deriv	muscld_deriv.c	/^void muscld_deriv(double **f,$/;"	f
+nbfaces	ham2dtypes.h	/^  int    nbfaces; \/\/ total number of boundary faces$/;"	m	struct:GRID
+ncells	ham2dtypes.h	/^  int    ncells;  \/\/ total number of quadrilatera$/;"	m	struct:GRID
+nchainFaces	ham2dtypes.h	/^  int    nchainFaces; \/\/ total number of faces in the chainConn list$/;"	m	struct:GRID
+nchains	ham2dtypes.h	/^  int    nchains; \/\/ total number of chains$/;"	m	struct:GRID
+ncolors	ham2dtypes.h	/^  int    ncolors; \/\/ total number of colors for chains$/;"	m	struct:GRID
+nearBodyRadius	preprocess.c	17;"	d	file:
+neig	ham2dtypes.h	/^  int    *neig;   \/\/ list of neighbors$/;"	m	struct:GRID
+neig	test_faces.f90	/^  integer, allocatable :: neig(/;"	v	program:test_faces
+nfaces	ham2dtypes.h	/^  int    nfaces;  \/\/ total number of faces$/;"	m	struct:GRID
+nmaxchain	ham2dtypes.h	/^  int    nmaxchain;$/;"	m	struct:GRID
+nnodes	ham2dtypes.h	/^  int    nnodes;  \/\/ total number of nodes$/;"	m	struct:GRID
+order	ham2dtypes.h	/^  int    order;   \/\/ solution order on this grid$/;"	m	struct:GRID
+outputSolution	outputSolution.c	/^void outputSolution(GRID *g,SOLN *s)$/;"	f
+outputdq	outputSolution.c	/^void outputdq(GRID *g,SOLN *s)$/;"	f
+outputr	outputSolution.c	/^void outputr(GRID *g,SOLN *s)$/;"	f
+pentSolve	triSolvers.c	/^void pentSolve(REAL *a,REAL *b,REAL *c,REAL *d,REAL *e,REAL *f,int N)	{$/;"	f
+pinf	ham2dFunctionDefs.h	6;"	d
+pr	ham2dtypes.h	/^  double gm1,c2b,rgas,pr,prtr;$/;"	m	struct:SOLN
+preprocess	preprocess.c	/^void preprocess(GRID *g)$/;"	f
+prtr	ham2dtypes.h	/^  double gm1,c2b,rgas,pr,prtr;$/;"	m	struct:SOLN
+q	ham2dtypes.h	/^  double *q;     \/\/ q -variables [rho rho*u rho*v e]$/;"	m	struct:SOLN
+ql	ham2dtypes.h	/^  double **ql;$/;"	m	struct:GRID
+qr	ham2dtypes.h	/^  double **qr;$/;"	m	struct:GRID
+qt	ham2dtypes.h	/^  double *qt;$/;"	m	struct:SOLN
+qtt	ham2dtypes.h	/^  double *qtt;$/;"	m	struct:SOLN
+r	ham2dtypes.h	/^  double *r;     \/\/ solution residual at cell centroids$/;"	m	struct:SOLN
+r0	ham2dtypes.h	/^  double *r0;    \/\/ solution residual at cell centroids$/;"	m	struct:SOLN
+readGrid	readGrid.c	/^void readGrid(GRID *g)$/;"	f
+res0	ham2dtypes.h	/^  double res0;$/;"	m	struct:SOLN
+rey	ham2dtypes.h	/^  double mach,alpha,rey;$/;"	m	struct:SOLN
+rgas	ham2dtypes.h	/^  double gm1,c2b,rgas,pr,prtr;$/;"	m	struct:SOLN
+rinf	ham2dFunctionDefs.h	4;"	d
+rmat	ham2dtypes.h	/^  double rmat[4][4];$/;"	m	struct:faceMat
+roeflx	roeflx.c	/^void roeflx(double *specRadius,double flux[NVAR],$/;"	f
+sigma	ham2dtypes.h	/^  double *sigma; \/\/ line integral of spectral radius per cell$/;"	m	struct:SOLN
+smoothGrid	smoothGrid.c	/^void smoothGrid(GRID *g, int msweep)$/;"	f
+stepSolution	stepSolution.c	/^void stepSolution(char *stepType,GRID *g,SOLN *s,double dt,double *l2norm)$/;"	f
+swap	ham2dtypes.h	101;"	d
+test_faces	test_faces.f90	/^program test_faces$/;"	p
+timeInteg	ham2dtypes.h	/^  int    timeInteg; \/\/ timeIntegration scheme$/;"	m	struct:GRID
+timeacc	ham2dtypes.h	/^  int    timeacc; \/\/ time accurate or not$/;"	m	struct:GRID
+trace	ham2dtypes.h	98;"	d
+tracef	ham2dtypes.h	97;"	d
+uinf	ham2dtypes.h	/^  double uinf,vinf,einf;$/;"	m	struct:SOLN
+updateSoln	updateSoln.c	/^void updateSoln(double *qsrc,  \/\/ "source\/initial" states$/;"	f
+updateTime	updateTime.c	/^void updateTime(GRID *g, SOLN *s)$/;"	f
+vinf	ham2dtypes.h	/^  double uinf,vinf,einf;$/;"	m	struct:SOLN
+visc	ham2dtypes.h	/^  int    visc;   \/\/ viscous $/;"	m	struct:GRID
+vol	ham2dtypes.h	/^  double *vol; \/\/ cell volume$/;"	m	struct:GRID
+wallFlux	wallFlux.f90	/^subroutine wallFlux(/;"	s
+wallFluxJacobian	wallFlux.f90	/^subroutine wallFluxJacobian(/;"	s
+weno	weno.c	/^void weno(double **f,  \/\/fluxes at each edge$/;"	f
+weno3	weno3.c	/^void weno3(double **f, \/\/fluxes at each edge$/;"	f
+weno5	weno.c	/^void weno5(double a,  \/\/fluxes at each edge$/;"	f
+x	ham2dtypes.h	/^  double *x;                 \/\/ coordinates of nodes$/;"	m	struct:GRID

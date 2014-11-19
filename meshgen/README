@@ -1,0 +1,49 @@
+#####################################################################
+#                                                                   #
+#          README FILE TO USE MESH GENERATOR FOR HAM CODE           # 
+#                                                                   #
+#####################################################################
+Code written by Bharath Govindarajan (bharath@umd.edu)
+
+To build:
+---------
+make
+
+Test case:
+----------
+- Currently 'input.meshgen' file configured to generate the mesh for
+  NACA 0012 airfoil at quad-level 2
+- ./meshgen
+
+Provided scripts:
+-----------------
+- 'execute.sh' 
+  - clears old data, builds the code, waits on user input to proceed 
+    (in the event that compilation causes errors), and executes the code
+
+- 'preplot.sh'
+  - converts the relevant tecplot file from ASCII to binary to 
+    facilitate faster read-in using Tecplot
+  - Currently, the user is required to set the path of the Tecplot
+    preplot (usually /usr/local/Tecplot/preplot) executable manaually
+    in preplot.sh
+
+To view results:
+----------------
+- All results are stored in './output/' as .dat or .tecdat files
+  - .dat files are those needed by the solver 
+  - .tecdat are files used by 'preplot.sh' and are converted to '.plt'
+    and stored in './output/preplot/' from where they can be visualized
+- The file './output/statistics.dat' contains preliminary statistics
+  about the mesh and loops
+
+Input files:
+------------
+- 'input.meshgen' is the main input file
+- Input coordinate and connectivity files for the initial triangular
+  mesh are stored in './input/'
+
+
+#####################################################################
+#                           END OF FILE                             #
+#####################################################################
