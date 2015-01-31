@@ -17,7 +17,7 @@
 //
 // list1 is a         list of elements of Set 2 per element of Set 1 (size N)
 // list2 is a reverse list of elements of Set 1 per element of Set 2 (size N)
-// n1 is the number of elements in Set 1                                                                          
+// n1 is the number of elements in Set 1
 // n2 is the number of elements in Set 2
 // index1 is the starting index in list1 for each element of Set 1 (size n1+1)
 // index2 is the starting index in list2 for each element of Set 2 (size n2+1)

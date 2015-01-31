@@ -70,13 +70,11 @@ void triCellAndVertexLoops(GRID *g)
    int cLoop2[g->triLoop->maxLen];
    int iact[g->triLoop->maxLen]; 
    int EV[2*g->vertLoop->maxLen];
-
    // Loop through the total number of nodes
    ikc = 0; 
    ikv = 0;
 	for (i = 0; i < g->numTriNode; i++)
 	{
-
 		k  = g->triLoop->maxLen;
       k1 = k;
       k2 = k+3;
@@ -138,7 +136,6 @@ void triCellAndVertexLoops(GRID *g)
 
       } // j loop
       
-
       // If the number of connections is only 1
       // (Haven't encountered this condition yet)
       if (nc == 1)
@@ -164,7 +161,7 @@ void triCellAndVertexLoops(GRID *g)
 
          V1        = CC2[0];
          V2        = CC2[1];
-         EV[k+1]     = V1; // end vertices for the loop
+         EV[k+1]   = V1; // end vertices for the loop
          EV[k+2]   = V2; // the last two vertices are CC2[0] and CC2[1]
 
          // set iact to 1s
@@ -233,6 +230,8 @@ void triCellAndVertexLoops(GRID *g)
             } // j for loop            
          } // while condition (icont)
       
+
+
          // cell loops
          ncl = kloop1 + kloop2 + 2; // number of cells         
 

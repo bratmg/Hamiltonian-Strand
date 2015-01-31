@@ -133,6 +133,13 @@ void findTriangleEdges(GRID *g)
 		g->triEdge[i][1] = eTmp[i][1];
 		g->triEdge[i][2] = eTmp[i][2];
 		g->triEdge[i][3] = eTmp[i][3];
+
+      if (nGrid > 1)
+      {
+         for (j = 0; j < g->boundaryCount; j++)
+            if (i == g->boundaryID[j])
+               g->triEdge[i][3] = eTmp[i][3] = -5;
+      }
 	} // i loop
 
 	g->numTriEdge = ne; 
@@ -185,9 +192,8 @@ void createVerticesOnEdge(GRID *g)
    int     i,i1,i2,j,k1,k2,ktemp;
    int     iSurface,nVert,nEdge;
    int    *vertID;
-   double  posA[3],posB[3],deltaDist; // the 4th index takes in the node weight
-   double *posVert;
-   //double posA1[3],posA2[3],posA3[3];
+   double  posA[3],posB[3],normalA[3],normalB[3],deltaDist;
+   double *posVert,*normalVert;
    int     halfEdgePerSide = 0.5*g->nEdgePerSide;
    int     halfVertm1      = 0.5*(g->nVertPerSide-1);
 
@@ -205,13 +211,17 @@ void createVerticesOnEdge(GRID *g)
       for (j = 0; j < N_QEDGE; j++)
          g->quadEdge[i][j] = -1;
 
+   // create unique cells ID for edges that border a subdomain
+   if (nGrid > 1) subdomainEdgeBlanking(g);
+
    g->iBoundary = (int *) malloc(sizeof(int)*g->numNodePos);
    for (i = 0; i < g->numNodePos; i++)
       g->iBoundary[i] = 0;
 
    // allocate posVert   
-   deltaDist = (double) 1./g->nEdgePerSide;
-   posVert   = (double *) malloc(sizeof(double)*3*g->nVertPerSide);
+   deltaDist  = (double) 1./g->nEdgePerSide;
+   posVert    = (double *) malloc(sizeof(double)*3*g->nVertPerSide);
+   normalVert = (double *) malloc(sizeof(double)*3*g->nVertPerSide);
 
    vertID    = (int *) malloc(sizeof(int)*(g->nVertPerSide+2));
 
@@ -227,21 +237,26 @@ void createVerticesOnEdge(GRID *g)
       //    A     A1      A2      A3    B
       for (j = 0; j < 3; j++ )
       {
-         posA[j] = g->allNodePos[3*i1 + j];
-         posB[j] = g->allNodePos[3*i2 + j];  
+         posA[j]    = g->allNodePos[3*i1 + j];
+         posB[j]    = g->allNodePos[3*i2 + j];  
+         normalA[j] = g->nodeNormal[3*i1 + j];
+         normalB[j] = g->nodeNormal[3*i2 + j];
       }
 
       // Is this a domain specific condition. Must check.
-      if ( strcmp(surfaceType,"naca")==0 && (g->triEdge[i][3]==-1) 
+      if ( strcmp(surfaceType,"naca")==0 
+            && (g->triEdge[i][3]==-1) 
             && (abs(posA[1])<0.61) && (abs(posA[0])<1.1) )
          iSurface = 1;                  
-      else if (strcmp(surfaceType,"sphere")==0)
+      else if (strcmp(surfaceType,"sphere")==0 ||
+               strcmp(surfaceType,"robin")==0 )
          iSurface = 1;
       else
          iSurface = 0;      
 
       // add new vertices to the edge of a triangle      
-      addVerticesOnEdge(posA,posB,posVert,iSurface,
+      addVerticesOnEdge(posA,posB,posVert,
+                        normalA,normalB,normalVert,iSurface,
                         g->nVertPerSide,deltaDist);
 
       if(iSurface==1)
@@ -254,13 +269,18 @@ void createVerticesOnEdge(GRID *g)
       }
 
       // append the position of the newly formed vertices onto
-      // the edge array
+      // the edge array, and update their normals as well
       ktemp = k1;       
       for (j = 0; j < g->nVertPerSide; j++)
       {
          g->allNodePos[3*ktemp    ] = posVert[3*j    ];
          g->allNodePos[3*ktemp + 1] = posVert[3*j + 1];
          g->allNodePos[3*ktemp + 2] = posVert[3*j + 2];
+
+         g->nodeNormal[3*ktemp    ] = normalVert[3*j    ];
+         g->nodeNormal[3*ktemp + 1] = normalVert[3*j + 1];
+         g->nodeNormal[3*ktemp + 2] = normalVert[3*j + 2];
+
          ktemp++;
       } // j loop
 
@@ -324,9 +344,9 @@ void createInteriorVertices(GRID * g)
 
    printf("#meshgen: Creating interior vertices ...\n");
 
-   int      i,j,jj,n,is1,is2;
+   int      i,j,jj,n,nn,is1,is2;
    int      index,halfEdgePerSide,halfVertm1,itemp;
-   int      k,kk,k1,k2,k3,k4,k5,ktemp,ktemp3,ktemp4,ktemp5,koffset;
+   int      k,kk,k1,k2,k3,k4,k5,k6,ktemp,ktemp3,ktemp4,ktemp5,koffset;
    int      iA,iB,iC,iD,iE,iF,iO;
    int      index1, index2;
    int      edgeID[3],edge[4],dirAB,dirBC,dirCA;
@@ -335,7 +355,7 @@ void createInteriorVertices(GRID * g)
    double   aa,bb,cc;
    double   A[3],B[3],C[3],O[3];
    double   deltaDist;
-   double  *boundaryPts, *intPts, *posVert;
+   double  *boundaryPts, *intPts, *posVert, *normalVert;
    double   dummy1[3],dummy2[3];
 
    for (i = 0; i < 3; i++)
@@ -359,6 +379,7 @@ void createInteriorVertices(GRID * g)
    k3 = g->nEdgePerSide*g->numTriEdge;
    k4 = k1 + g->numTriangle; // int edge points
    k5 = k4 + 3*halfVertm1*g->numTriangle; // quad int points
+   k6 = 2*g->numTriEdge; // for additional subdivision at triangular level
 
    aa = 0.5;
    bb = 0.5;
@@ -371,23 +392,40 @@ void createInteriorVertices(GRID * g)
    // Allocations
    // ===============================================================
 
-   g->quadConn = (int **) malloc(sizeof(int *)*n);
+   g->quadConn     = (int **) malloc(sizeof(int *)*n);
+   g->quad2triList = (int *) malloc(sizeof(int)*n);
+
    for (i = 0; i < n; i++)
-      g->quadConn[i] = (int *) malloc(sizeof(int)*(N_EDGE));
+      g->quadConn[i]     = (int *) malloc(sizeof(int)*(N_EDGE));
    
    // initialize quadConn
    for (i = 0; i < n; i++)
       for (j = 0; j < N_EDGE; j++)      
          g->quadConn[i][j] = 0;
-   
+
    boundaryPts = (double *) malloc(sizeof(double)*9*g->nVertPerSide); // 3 sides 
    intPts      = (double *) malloc(sizeof(double)*3*g->nIntPts);
 
    // allocate posVert   
    deltaDist   = 1./halfEdgePerSide;
    posVert     = (double *) malloc(sizeof(double)*3*halfVertm1);
+   normalVert  = (double *) malloc(sizeof(double)*3*halfVertm1);
 
    vertID      = (int *) malloc(sizeof(int)*(halfVertp2));
+
+   // allocate triQuadEdge
+   nn = 2*g->numTriEdge + 3*g->numTriangle; // total number of triangular
+                                            // level edges
+   g->numTriQuadEdge    = nn;
+   g->triQuadEdge       = (int **) malloc(sizeof(int *)*nn);
+
+   for (i = 0; i < nn; i++)
+      g->triQuadEdge[i] = (int *) malloc(sizeof(int)*4);
+
+   // initial values
+   for (i = 0; i < nn; i++)
+      for (j = 0; j < 4; j++)
+         g->triQuadEdge[i][j] = -1;
 
    // ===============================================================
    //
@@ -411,7 +449,7 @@ void createInteriorVertices(GRID * g)
 		// list of the edge ID for a given triangle
 		edgeID[0] = g->edge2triList[3*i  ];
 		edgeID[1] = g->edge2triList[3*i+1];
-		edgeID[2] = g->edge2triList[3*i+2];      
+		edgeID[2] = g->edge2triList[3*i+2];    
 
 		// Find the coordinate and indices of points on triangle edges
       // Loop over each of the three edges of a triangle
@@ -449,6 +487,12 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 0;
                   ktemp++;
                   itemp++; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iA;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iD;
+                  g->triQuadEdge[2*edgeID[j]  ][3] = 1;
+
                } // k loop
 
                itemp = pow4;
@@ -459,8 +503,13 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 0;
                   ktemp++;
                   itemp++; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iB;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iD;
+                  g->triQuadEdge[2*edgeID[j]+1][2] = 1;
                } // k loop
-             
+
             }
             else if (edge[1] == iC)
             {
@@ -475,6 +524,12 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 3;
                   ktemp++;
                   itemp += pow2;
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iA;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iF;
+                  g->triQuadEdge[2*edgeID[j]  ][2] = 1;
+                  
                } // k loop
 
                itemp = 2*pow4 + (pow2-1)*pow2;
@@ -485,8 +540,13 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 2;
                   ktemp++;
                   itemp++; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iC;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iF;
+                  g->triQuadEdge[2*edgeID[j]+1][3] = 1;
                } // k loop
-             
+               
             }
          } 
 
@@ -509,6 +569,11 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 0;
                   ktemp++;
                   itemp--;
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iB;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iD;
+                  g->triQuadEdge[2*edgeID[j]  ][2] = 1;
                } // k loop
 
                itemp = pow2 - 1;
@@ -519,7 +584,14 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 0;
                   ktemp++;
                   itemp--; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iA;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iD;
+                  g->triQuadEdge[2*edgeID[j]+1][3] = 1;
                } // k loop
+
+               
             }
             else if (edge[1] == iC)
             {
@@ -534,6 +606,11 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 1;
                   ktemp++;
                   itemp += pow2;
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iB;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iE;
+                  g->triQuadEdge[2*edgeID[j]  ][3] = 1;
                } // k loop
 
                itemp = 2*pow4 + pow2 - 1;
@@ -544,6 +621,11 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 1;
                   ktemp++;
                   itemp += pow2; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iC;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iE;
+                  g->triQuadEdge[2*edgeID[j]+1][2] = 1;
                } // k loop
 
             }
@@ -568,6 +650,12 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 2;
                   ktemp++;
                   itemp--;
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iC;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iF;
+                  g->triQuadEdge[2*edgeID[j]  ][3] = 1;
+
                } // k loop
 
                itemp = (pow2-1)*pow2;
@@ -578,8 +666,13 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 3;
                   ktemp++;
                   itemp -= pow2; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iF;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iA;
+                  g->triQuadEdge[2*edgeID[j]+1][2] = 1;
                } // k loop
-               
+
             }
             else if (edge[1] == iB) // edge is C--B
             {
@@ -594,6 +687,13 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][4] = 1;
                   ktemp++;
                   itemp -= pow2;
+
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]  ][0] = iC;
+                  g->triQuadEdge[2*edgeID[j]  ][1] = iE;
+                  g->triQuadEdge[2*edgeID[j]  ][2] = 1;
+               
                } // k loop
 
                itemp = 2*pow4-1;
@@ -604,7 +704,13 @@ void createInteriorVertices(GRID * g)
                   g->quadEdge[ktemp][5] = 1;
                   ktemp++;
                   itemp -= pow2; // skip
+
+                  // append to triQuadEdge
+                  g->triQuadEdge[2*edgeID[j]+1][0] = iB;
+                  g->triQuadEdge[2*edgeID[j]+1][1] = iE;
+                  g->triQuadEdge[2*edgeID[j]+1][3] = 1;
                } // k loop
+
             }
          }
 
@@ -620,16 +726,42 @@ void createInteriorVertices(GRID * g)
           
           O[k] = ONE_THIRD*(A[k] + B[k] + C[k]);
 
-          g->allNodePos[3*iO + k] = O[k];                    
+          g->allNodePos[3*iO + k] = O[k];
+          g->nodeNormal[3*iO + k] = ONE_THIRD*(g->nodeNormal[3*iA + k]
+                                             + g->nodeNormal[3*iB + k]
+                                             + g->nodeNormal[3*iC + k]);
       }
 
       // flush point O to surface (only if sphere)
-      if(strcmp(surfaceType,"sphere")==0)
+      if(strcmp(surfaceType,"sphere")==0 ||
+         strcmp(surfaceType,"robin") ==0 )
       {
-         moveToBoundary(dummy1,dummy2,&g->allNodePos[3*iO],surfaceType);
+         moveToBoundary(dummy1,dummy2,&g->allNodePos[3*iO],
+            &g->nodeNormal[3*iO],surfaceType);
       }
 
       ktemp++; // update counter for center position
+
+      // ============================================================
+      // add the edges O-D, O-E and O-F to the edges of triangular 
+      // level for additional subdivision
+      // ============================================================
+      g->triQuadEdge[k6  ][0] = iD;
+      g->triQuadEdge[k6  ][1] = iO;
+      g->triQuadEdge[k6  ][2] = 1;
+      g->triQuadEdge[k6  ][3] = 1;
+
+      g->triQuadEdge[k6+1][0] = iE;
+      g->triQuadEdge[k6+1][1] = iO;
+      g->triQuadEdge[k6+1][2] = 1;
+      g->triQuadEdge[k6+1][3] = 1;
+
+      g->triQuadEdge[k6+2][0] = iF;
+      g->triQuadEdge[k6+2][1] = iO;
+      g->triQuadEdge[k6+2][2] = 1;
+      g->triQuadEdge[k6+2][3] = 1;
+
+      k6+=3; // update counter for triQuadEdge
       // ============================================================
       // Loop over each of the three edges of a triangle
       // and add points along the connecting edges
@@ -640,27 +772,36 @@ void createInteriorVertices(GRID * g)
       ktemp4 = k4;
       ktemp5 = k5;
 
+      // loop over each edge
       for (j = 0; j < 3; j++)
       {
          // index of the middle point along any edge
          index   = g->numTriNode + g->nVertPerSide*edgeID[j]
                  + halfVertm1;
 
-         if(strcmp(surfaceType,"sphere")==0) {iSurface = 1;}
-         else {iSurface = 0;}
+         if(strcmp(surfaceType,"sphere")==0)
+            iSurface = 1;
+         else 
+            iSurface = 0;
 
          // add new vertices to the edge of a triangle      
          addVerticesOnEdge(&g->allNodePos[3*index],O,posVert,
-                        iSurface,halfVertm1,deltaDist);
+                           &g->nodeNormal[3*index],&g->nodeNormal[3*iO],normalVert,
+                           iSurface,halfVertm1,deltaDist);
 
          
          // append the position of the newly formed vertices on
-         // the connecting edges to the allNodePos array         
+         // the connecting edges to the allNodePos array
+         // Update the normal values as well  
          for (k = 0; k < halfVertm1; k++)
          {            
             g->allNodePos[3*ktemp4    ] = posVert[3*k    ];
             g->allNodePos[3*ktemp4 + 1] = posVert[3*k + 1];
             g->allNodePos[3*ktemp4 + 2] = posVert[3*k + 2];
+
+            g->nodeNormal[3*ktemp4    ] = normalVert[3*k    ];
+            g->nodeNormal[3*ktemp4 + 1] = normalVert[3*k + 1];
+            g->nodeNormal[3*ktemp4 + 2] = normalVert[3*k + 2];
 
             ktemp4++;
          } // k loop
@@ -736,7 +877,7 @@ void createInteriorVertices(GRID * g)
          }
          else
          {
-            traces('Something is missing. Stopping.');
+            traces('Something is missing. Stopping. edgeOperations.c');
             exit(1);
          }
 
@@ -840,9 +981,16 @@ void createInteriorVertices(GRID * g)
                   (kk+1)*deltaDist*(g->allNodePos[3*index2+k]
                                   - g->allNodePos[3*index1+k]);
 
+                  g->nodeNormal[3*ktemp5+k] = 
+                  g->nodeNormal[3*index1+k] +
+                  (kk+1)*deltaDist*(g->nodeNormal[3*index2+k]
+                                  - g->nodeNormal[3*index1+k]);
+
                } // k loop
-               if(strcmp(surfaceType,"sphere")==0)
-                  moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp5],surfaceType);
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin")==0)
+                  moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp5]
+                     ,&g->nodeNormal[3*ktemp5],surfaceType);
 
                ktemp5++;
             } // kk loop
@@ -860,6 +1008,14 @@ void createInteriorVertices(GRID * g)
                g->quadConn[ktemp][1] = quadPtID[jj  ][kk-1];
                g->quadConn[ktemp][2] = quadPtID[jj  ][kk  ];
                g->quadConn[ktemp][3] = quadPtID[jj-1][kk  ];
+
+               // the first column of quad2triList is the ID of the
+               // quadrilateral and the second column is the ID of the
+               // original triangle. The vertices and the area can be
+               // computed with this data
+               g->quad2triList[ktemp] = i;
+
+               // update
                ktemp++;
             } // jj loop
          } // kk loop
@@ -989,6 +1145,32 @@ void createInteriorVertices(GRID * g)
 
    g->numQuadEdgeT  = g->numQuadEdge; // temp variable used in loopsAndCells
    g->numQuadEdge   = k3;//18*g->numTriangle;
+
+}
+
+// ==================================================================
+//
+// subdomainEdgeBlanking
+//
+// ==================================================================
+void subdomainEdgeBlanking(GRID *g)
+{
+   int i,j,k;
+   int offset;
+
+   for (i = 0; i < g->boundaryCount; i++)
+   {
+      offset = g->boundaryID[i]*g->nEdgePerSide;
+      for (j = 0; j < g->nEdgePerSide; j++)
+      {
+         g->quadEdge[offset+j][2] = -5;
+         g->quadEdge[offset+j][3] = -5;
+         g->quadEdge[offset+j][4] = -5;
+         g->quadEdge[offset+j][5] = -5;
+      }
+
+   }
+
 
 }
 

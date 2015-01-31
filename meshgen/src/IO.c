@@ -12,63 +12,7 @@
 #include "globalVariables.h"
 #include "IO.h"
 #include "meshtype.h"
-
-// ##################################################################
-// WRITE AN ARRAY TO FILE - ONLY FOR TESTING
-// ##################################################################
-void writearrayINT(const int *array, const int n)
-{
-   int i;
-   
-   FILE * fp = fopen("test.dat","w");   
-
-   for(i=0; i<n; i++)   
-      fprintf(fp,"%d %d\n",i,array[i]);
-   
-   fclose(fp);
-}
-
-
-void writearrayDUB(const double *array, const int n)
-{
-   int i;
-   
-   FILE * fp = fopen("test.dat","w");
-
-   for(i=0; i<n; i++)   
-      fprintf(fp,"%d %lf\n",i,array[i]);
-
-
-   fclose(fp);
-}
-
-void writemultiarrayINT(const int **array, const int m, const int n)
-{
-   int i,j;
-   
-   FILE * fp = fopen("test.dat","w");
-
-   for(i=0; i<m; i++)   
-      for (j=0; j<n; j++)
-         fprintf(fp,"%d %d %d\n",i,j,array[i][j]);
-
-
-   fclose(fp);
-}
-
-void writemultiarrayDUB(const double **array, const int m, const int n)
-{
-   int i,j;
-   
-   FILE * fp = fopen("test.dat","w");
-
-   for(i=0; i<m; i++)   
-      for (j=0; j<n; j++)
-         fprintf(fp,"%d %d %lf\n",i,j,array[i][j]);
-
-
-   fclose(fp);
-}
+#include "flushToSurface.h"
 
 // ##################################################################
 //
@@ -106,8 +50,11 @@ void readInputs()
    int    i,j,k;
    int    nLayer,qLevel;
    char   c,buffer[100];
-   char   nodeData[250];
-   char   connData[250];
+   char   nodeBase[250],nodeData[250];
+   char   connBase[250],connData[250];
+   char   boundBase[250],boundData[250];
+   char   normalBase[250],normalData[250];   
+   char   *appendStr, intStr[10];
    double growth,initLen;
 
    // ===============================================================
@@ -124,8 +71,10 @@ void readInputs()
       while((c=fgetc(fptr))!='\n'); 
 
    fscanf(fptr,"num grid      = %d\n",&nGrid);
-   fscanf(fptr,"node file     = %s\n",nodeData);
-   fscanf(fptr,"conn file     = %s\n",connData);
+   fscanf(fptr,"node file     = %s\n",nodeBase); 
+   fscanf(fptr,"conn file     = %s\n",connBase);
+   fscanf(fptr,"normal file   = %s\n",normalBase);
+   fscanf(fptr,"boundary file = %s\n",boundBase);
    fscanf(fptr,"flush surface = %s\n",surfaceType);
    fscanf(fptr,"quad level    = %d\n",&qLevel);
    fscanf(fptr,"num smooth    = %d\n",&numSmooth);
@@ -137,21 +86,68 @@ void readInputs()
 
    if(iStrand && nLayer < 2) nLayer = 2;
 
+   // load robin fuselage data if fuselage type == robin
+   if(strcmp(surfaceType,"robin")==0) 
+   {  
+      createRobinData();
+   }
+
+
    // initialize the number of grids
    g = (GRID *) malloc(sizeof(GRID)*nGrid);
 
+   appendStr = ".dat";
 
+   if(nGrid >= 1000)
+   {
+      printf("#meshgen: Too many subdomains. Need to recode \n");
+      printf("#meshgen: the numbering scheme. Stopping. \n");
+      exit(1);
+   }
    // ===============================================================
    // Loop through number of grids
    // ===============================================================
    for (i = 0; i < nGrid; i++) // loop through total number of grids
    {
+
+      strcpy(nodeData,nodeBase);
+      strcpy(connData,connBase);
+      strcpy(boundData,boundBase);
+      strcpy(normalData,normalBase);
+      // Obtain the coord and conn file name if more than one domain
+      // i.e., if multiple domains or sub-domains
+      // if(1)
+      if(nGrid > 1) // need to append 001.dat, 002.dat, etc.
+      {
+         if(i < 10)
+            sprintf(intStr,"00%d",i);
+         else if(i < 100)
+            sprintf(intStr,"0%d",i);
+         else
+            sprintf(intStr,"%d",i);
+
+         strcat(nodeData,intStr);
+         strcat(nodeData,appendStr);
+         strcat(connData,intStr);
+         strcat(connData,appendStr);
+         strcat(boundData,intStr);
+         strcat(boundData,appendStr);
+         strcat(normalData,intStr);
+         strcat(normalData,appendStr);
+      }
+      else // single grid (need to append the .dat)
+      {
+         strcat(nodeData,appendStr);
+         strcat(connData,appendStr);
+         strcat(normalData,appendStr);
+      }
+
       // ============================================================
       // Read coordinate data
       // ============================================================
       if( (fptr = fopen(nodeData,"r")) == NULL)
       {
-         printf("Error: Node data file missing. \n");
+         printf("Error: Node data file '%s' missing. \n",nodeData);
          exit(1);
       }
 
@@ -179,7 +175,7 @@ void readInputs()
       // ============================================================
       if( (fptr = fopen(connData,"r")) == NULL)
       {
-         printf("Error: Connectivity data file missing. \n");
+         printf("Error: Connectivity data file '%s' missing. \n",connData);
          exit(1);
       }
 
@@ -207,6 +203,27 @@ void readInputs()
 
       fclose(fptr); // close nodeData
 
+      // ============================================================ 
+      // Read boundary data
+      // ============================================================
+      if( nGrid > 1)
+      { 
+         if ((fptr = fopen(boundData,"r")) == NULL)
+         {
+            printf("Error: Boundary data file '%s' missing. \n",boundData);
+            exit(1);
+         }
+
+         // allocate
+         fscanf(fptr,"%d\n",&g[i].boundaryCount);
+         g[i].boundaryID = (int *) malloc(sizeof(int)*g[i].boundaryCount);
+
+         for (j = 0; j < g[i].boundaryCount; j++)
+            fscanf(fptr,"%d\n",&g[i].boundaryID[j]);
+
+         fclose(fptr);
+      }
+
       // ============================================================
       // Set variables related to strand meshes
       // ============================================================
@@ -232,6 +249,45 @@ void readInputs()
 		pow2 = pow(2,g[i].quadLevel);
 		pow4 = pow(4,g[i].quadLevel);
 
+
+      // ============================================================ 
+      // Read node normal data
+      // ============================================================
+      // allocate
+      double dummy;
+      int   halfVertm1      = 0.5*(g[i].nVertPerSide-1);
+      
+      k = g->numTriNode + g->numTriangle*(3*g[i].nVertPerSide +
+                                          3*halfVertm1 + 1 + 
+                                          3*halfVertm1*halfVertm1);
+      k*=3;
+      // allocation an upper bound!
+      g[i].nodeNormal = (double *) malloc(sizeof(double)*k);
+      for (j = 0; j < k; j++)
+         g[i].nodeNormal[j] = -100.;
+
+      if (strcmp(surfaceType,"robin")==0)
+      {
+         if ((fptr = fopen(normalData,"r")) == NULL)
+         {
+            printf("Error: Normal data file '%s' missing. \n",normalData);
+            exit(1);
+         }
+
+         fscanf(fptr,"%d\n",&dummy);
+
+         k = 0;
+         for (j = 0; j < 3*g[i].numTriNode; j++)
+         {
+            fscanf(fptr,"%lf %lf %lf\n",&g[i].nodeNormal[k]
+               ,&g[i].nodeNormal[k+1],&g[i].nodeNormal[k+2]);
+            k+=3;
+         }
+
+         fclose(fptr);
+      }
+
+
    } // end i for number of grid
 
 
@@ -240,10 +296,10 @@ void readInputs()
 // ##################################################################
 //
 // writeTecplot
-//  reads from input.meshgen and from the node and connectivity data
+// reads from input.meshgen and from the node and connectivity data
 //
 // ##################################################################
-void writeTecplot(GRID *g)
+void writeTecplot(int gridID, GRID *g)
 {
 
    int      i,j,k,kk,temp;
@@ -251,16 +307,19 @@ void writeTecplot(GRID *g)
    int      ie,iA,iB,iC,iD;
    int      count1,count2,lenCount;
    int     *edgeConn = (int *) malloc(sizeof(int)*2*g->numQuadEdge);
-   char     filename[30]; 
+   char     filename[30],fileID[250],intStr[10]; 
    double   dist;
    double  *edgePts  = (double *)  malloc(sizeof(double)*3*g->quadLoop->totLen);   
    double **lenLoop  = (double **) malloc(sizeof(double *)*pow2*g->numTriNode);
    FILE    *fptr;
 
+
    // ===============================================================
    // TRIANGLES.DAT
    // ===============================================================   
-   fptr = fopen("./output/triangles.tecdat","w");
+   strcpy(fileID,folderName);
+   strcat(fileID,"triangles.tecdat");
+   fptr = fopen(fileID,"w");
    fprintf(fptr,"VARIABLES=\"X\",\"Y\",\"Z\" \n");
    fprintf(fptr,"ZONE N=%d, E=%d, DATAPACKING=POINT, ZONETYPE=FETRIANGLE\n",
       g->numTriNode,g->numTriangle);
@@ -288,7 +347,28 @@ void writeTecplot(GRID *g)
    // ===============================================================
    // QUADS.DAT
    // ===============================================================   
-   fptr = fopen("./output/quads.tecdat","w");
+   // normalize the normals
+   double sum;
+   sum = 0.;
+   k = 0;
+   for (j = 0; j < g->numNodePos; j++)
+   {
+      sum += g->nodeNormal[3*j  ]*g->nodeNormal[3*j  ] 
+           + g->nodeNormal[3*j+1]*g->nodeNormal[3*j+1] 
+           + g->nodeNormal[3*j+2]*g->nodeNormal[3*j+2];
+      sum = 1./sqrt(sum);
+
+      g->nodeNormal[3*j  ]*=sum;
+      g->nodeNormal[3*j+1]*=sum;
+      g->nodeNormal[3*j+2]*=sum;
+
+   }
+
+
+
+   strcpy(fileID,folderName);
+   strcat(fileID,"quads.tecdat");
+   fptr = fopen(fileID,"w");
    fprintf(fptr,"VARIABLES=\"X\",\"Y\",\"Z\" \n");
    fprintf(fptr,"ZONE N=%d, E=%d, DATAPACKING=POINT, ZONETYPE=FEQUADRILATERAL\n",
       g->numNodePos,g->numQuadConn);
@@ -299,6 +379,10 @@ void writeTecplot(GRID *g)
    {
       fprintf(fptr, "%lf %lf %lf \n", 
          g->allNodePos[k],g->allNodePos[k+1],g->allNodePos[k+2]);
+      // fprintf(fptr, "%lf %lf %lf \n", 
+      //   g->allNodePos[k  ]+0.1*g->nodeNormal[k],
+      //   g->allNodePos[k+1]+0.1*g->nodeNormal[k+1],
+      //   g->allNodePos[k+2]+0.1*g->nodeNormal[k+2]);
       k += 3;
    }
 
@@ -313,8 +397,10 @@ void writeTecplot(GRID *g)
 
    // ===============================================================
    // COORD.DAT
-   // ===============================================================   
-   fptr = fopen("./output/coord.dat","w");
+   // =============================================================== 
+   strcpy(fileID,folderName);
+   strcat(fileID,"coord.dat");
+   fptr = fopen(fileID,"w");
    if(iStrand) 
    {
       // create node positions
@@ -372,7 +458,9 @@ void writeTecplot(GRID *g)
    // ===============================================================   
    if(iStrand)
    {
-      fptr = fopen("./output/conn.dat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"conn.dat");
+      fptr = fopen(fileID,"w");
       fprintf(fptr,"%d\n",g->numQuadConn*(g->numStrandLayer-1));   
       for (i = 0; i < g->numStrandLayer-1; i++)
       {
@@ -394,7 +482,9 @@ void writeTecplot(GRID *g)
    }
    else
    {
-      fptr = fopen("./output/conn.dat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"conn.dat");
+      fptr = fopen(fileID,"w");
       fprintf(fptr,"%d\n",g->numQuadConn);
       
       // write the connectivity information   
@@ -412,7 +502,9 @@ void writeTecplot(GRID *g)
    // ===============================================================   
    if (iStrand)
    {
-      fptr = fopen("./output/ofaces.dat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"ofaces.dat");
+      fptr = fopen(fileID,"w");
       fprintf(fptr,"%d\n",g->numOctFace);
             
       for (j = 0; j <  g->numOctFace; j++)
@@ -426,7 +518,9 @@ void writeTecplot(GRID *g)
    }
    else
    {
-      fptr = fopen("./output/qedges.dat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"qedges.dat");
+      fptr = fopen(fileID,"w");
       fprintf(fptr,"%d\n",g->numQuadEdge);
 
       for (j = 0; j <  g->numQuadEdge; j++)
@@ -441,7 +535,9 @@ void writeTecplot(GRID *g)
    // ===============================================================
    // QLOOPS.DAT
    // ===============================================================   
-   fptr = fopen("./output/qloops.dat","w");
+   strcpy(fileID,folderName);
+   strcat(fileID,"qloops.dat");
+   fptr = fopen(fileID,"w");
    if(iStrand)
    {
       // total number of faces =   faces in each layer * (numLayer-1)
@@ -465,8 +561,10 @@ void writeTecplot(GRID *g)
 
    // ===============================================================
    // IQLOOPS.DAT
-   // ===============================================================      
-   fptr = fopen("./output/iqloops.dat","w");
+   // ===============================================================   
+   strcpy(fileID,folderName);
+   strcat(fileID,"iqloops.dat");
+   fptr = fopen(fileID,"w");
    if(iStrand) 
    {
       // understand the reason for +2
@@ -490,8 +588,9 @@ void writeTecplot(GRID *g)
    // ===============================================================
    // NCOLORS.DAT
    // ===============================================================
-
-   fptr = fopen("./output/ncolors.dat","w");
+   strcpy(fileID,folderName);
+   strcat(fileID,"ncolors.dat");
+   fptr = fopen(fileID,"w");
    if(iStrand)
       fprintf(fptr,"%d\n",g->maxCol+2);
    else
@@ -522,9 +621,11 @@ void writeTecplot(GRID *g)
       for (i = 0; i <= g->maxCol; i++)      
       {
 
-         printf("#meshgen: Preparing Tecplot file for loops %d ...\n",i+1);
-         sprintf(filename,"./output/loops%d.tecdat", i+1);      
-         fptr = fopen(filename,"w");
+         sprintf(filename,"loops%d.tecdat", i+1); 
+         strcpy(fileID,folderName);
+         strcat(fileID,filename);
+         printf("loops.dat %s\n",fileID );
+         fptr = fopen(fileID,"w");
 
          count1 = 0;
          count2 = 0;
@@ -584,13 +685,17 @@ void writeTecplot(GRID *g)
       }
 
       // NSTRANDS.DAT
-      fptr   = fopen("./output/nstrands.dat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"nstrands.dat");
+      fptr = fopen(fileID,"w");
       fprintf(fptr,"%d\n",g->numStrandLayer);
       fclose(fptr);
 
       // STRANDS.DAT
       printf("#meshgen: Preparing Tecplot file for strands ...\n");         
-      fptr   = fopen("./output/strands.tecdat","w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"strands.tecdat");
+      fptr = fopen(fileID,"w");
       
       k      = (pow2*g->numTriNode+1)*(g->numStrandLayer-1)-1;
 
@@ -660,8 +765,12 @@ void writeTecplot(GRID *g)
       {
 
          printf("#meshgen: Preparing Tecplot file for loops %d ...\n",i+1);
-         sprintf(filename,"./output/loops%d.tecdat", i+1);      
-         fptr = fopen(filename,"w");
+         sprintf(filename,"loops%d.tecdat", i+1);      
+
+         strcpy(fileID,folderName);
+         strcat(fileID,filename);
+         fptr = fopen(fileID,"w");
+
 
     
          count1 = 0;
@@ -685,21 +794,6 @@ void writeTecplot(GRID *g)
                edgePts[3*count1  ] = 0.5*(g->allNodePos[3*iA  ] + g->allNodePos[3*iB  ]);
                edgePts[3*count1+1] = 0.5*(g->allNodePos[3*iA+1] + g->allNodePos[3*iB+1]);
                edgePts[3*count1+2] = 0.5*(g->allNodePos[3*iA+2] + g->allNodePos[3*iB+2]);
-
-
-               // // compute L2 distance
-               // if (ii != i1)
-               // {
-               //    dist = (edgePts[3*count1  ]-edgePts[3*(count1-1)  ])*
-               //           (edgePts[3*count1  ]-edgePts[3*(count1-1)  ]) +
-               //           (edgePts[3*count1+1]-edgePts[3*(count1-1)+1])*
-               //           (edgePts[3*count1+1]-edgePts[3*(count1-1)+1]) +
-               //           (edgePts[3*count1+2]-edgePts[3*(count1-1)+2])*
-               //           (edgePts[3*count1+2]-edgePts[3*(count1-1)+2]);
-
-               //    lenLoop[k-1][lenCount]=sqrt(dist);
-               //    lenCount++;
-               // }
 
                count1++;                 
                if (ii < i2-1)
@@ -743,8 +837,9 @@ void writeTecplot(GRID *g)
    // ===============================================================
    if(iStrand)
    {      
-      sprintf(filename,"./output/brick.tecdat");
-      fptr = fopen(filename,"w");
+      strcpy(fileID,folderName);
+      strcat(fileID,"brick.tecdat");
+      fptr = fopen(fileID,"w");
 
       count1 = g->numStrandLayer*g->numNodePos;      // num nodes
       count2 = g->numQuadConn*(g->numStrandLayer-1); // num edges
@@ -785,7 +880,121 @@ void writeTecplot(GRID *g)
    }
 
 
+
+   // ===============================================================
+   // domainEdges
+   // ===============================================================
+   if (nGrid > 1)
+   {
+      strcpy(fileID,folderName);
+      strcat(fileID,"domainEdges.tecdat");
+      fptr = fopen(fileID,"w");
+      fprintf(fptr,"VARIABLES=\"X\",\"Y\",\"Z\" \n");
+      fprintf(fptr,"ZONE DATAPACKING=POINT, NODES=%d, ELEMENTS=%d, ZONETYPE=FELINESEG\n",
+      g->numTriNode,g->boundaryCount);
+
+      for (j = 0; j < g->numTriNode; j++)
+      {
+         fprintf(fptr,"%lf %lf %lf \n",
+            g->nodePosTri[3*j],g->nodePosTri[3*j+1],g->nodePosTri[3*j+2]);
+      }
+
+      for (j = 0; j < g->boundaryCount; j++)
+      {
+         fprintf(fptr,"%d %d \n",
+            g->triEdge[g->boundaryID[j]][0]+1,g->triEdge[g->boundaryID[j]][1]+1);
+      }
+
+      fclose(fptr);
+   }
+
 }
+
+// ==================================================================
+//
+// createOutputFolder.c
+//
+// creates the name of the subdomain folder and the variable is
+// stored in globalVariables.c
+// ==================================================================
+void createOutputFolder(int gridID)
+{
+	char intStr[10],command[250];
+
+   // output to screen
+   printf("\n====================================================================\n");
+   printf("\nDOMAIN %d\n\n",gridID );
+   printf("====================================================================\n");
+	
+   // create folder
+   sprintf(intStr,"00%d/",gridID);
+	strcpy(folderName,"./output/domain");
+	strcat(folderName,intStr);
+	strcpy(command,"mkdir ");
+	strcat(command,folderName);
+	system(command);
+
+}
+
+
+// ##################################################################
+// Write array to file (utility functions)
+// ##################################################################
+void writearrayINT(const int *array, const int n)
+{
+   int i;
+   
+   FILE * fp = fopen("test.dat","w");   
+
+   for(i=0; i<n; i++)   
+      fprintf(fp,"%d %d\n",i,array[i]);
+   
+   fclose(fp);
+}
+
+
+void writearrayDUB(const double *array, const int n)
+{
+   int i;
+   
+   FILE * fp = fopen("test.dat","w");
+
+   for(i=0; i<n; i++)   
+      fprintf(fp,"%d %lf\n",i,array[i]);
+
+
+   fclose(fp);
+}
+
+void writemultiarrayINT(const int **array, const int m, const int n)
+{
+   int i,j;
+   
+   FILE * fp = fopen("test.dat","w");
+
+   for(i=0; i<m; i++)   
+      for (j=0; j<n; j++)
+         fprintf(fp,"%d %d %d\n",i,j,array[i][j]);
+
+
+   fclose(fp);
+}
+
+void writemultiarrayDUB(const double **array, const int m, const int n)
+{
+   int i,j;
+   
+   FILE * fp = fopen("test.dat","w");
+
+   for(i=0; i<m; i++)   
+      for (j=0; j<n; j++)
+         fprintf(fp,"%d %d %lf\n",i,j,array[i][j]);
+
+
+   fclose(fp);
+}
+
+
 // ##################################################################
 // END OF FILE
 // ##################################################################

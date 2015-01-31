@@ -15,6 +15,8 @@ void createVerticesOnEdge(GRID *g);
 
 void createInteriorVertices(GRID *g);
 
+void subdomainEdgeBlanking(GRID *g);
+
 #endif
 // ##################################################################
 // END OF FILE

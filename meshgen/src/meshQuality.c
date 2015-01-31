@@ -16,9 +16,9 @@
 #define R2D   57.2957795130823
 #define INV90  0.01111111111111111111
 
-void meshQuality(GRID *g)
+void meshQuality(int gridID, GRID *g)
 {
-   checkQuality(g);
+   checkQuality(gridID, g);
 
    outputMeshQuality(g);
 
@@ -29,19 +29,22 @@ void meshQuality(GRID *g)
 // checkQuality
 // Obtain the angles and aspect ratio of cells
 // ##################################################################
-void checkQuality(GRID *g)
+void checkQuality(int gridID, GRID *g)
 {
 
    int    i,j,k;
    int    n1,n2,n3,n4;
    double pts[6][3],d[5],temp;
    double theta,thMin,thMax;   
+   char     filename[30],fileID[250],intStr[10]; 
+   FILE   *fptr;
 
    // ===============================================================
    // Cell aspect ratio
    // ===============================================================
 
    g->meshSkewness    = (double *) malloc(sizeof(double)*g->numQuadConn);
+   g->cellSizeRatio   = (double *) malloc(sizeof(double)*g->numQuadConn);
    g->numMeshSkew     = (int *)    malloc(sizeof(int)*NBINS);
    g->meshSkewnessID  = (int **)   malloc(sizeof(int *)*g->numQuadConn);
 
@@ -145,7 +148,9 @@ void checkQuality(GRID *g)
 
 
    // write out cell connectivity information to file
-   FILE *fptr = fopen("./output/cellQuality.tecdat","w");
+   strcpy(fileID,folderName);
+   strcat(fileID,"cellQuality.tecdat");
+   fptr = fopen(fileID,"w");
    for (i = 0; i < NBINS; i++)
    {
       if(g->numMeshSkew[i]>0)
@@ -178,11 +183,143 @@ void checkQuality(GRID *g)
    fclose(fptr);
 
    // write cell quality information for histogram
-   fptr = fopen("./output/histogram.dat","w");
+   strcpy(fileID,folderName);
+   strcat(fileID,"histogram.dat");
+   fptr = fopen(fileID,"w");
    for (i = 0; i < g->numQuadConn; i++)
       fprintf(fptr,"%lf \n",g->meshSkewness[i]);
 
    fclose(fptr);
+
+
+   // ===============================================================
+   // Cell size quality (as a fraction of the original triangle from
+   // which it was formed)
+   // ===============================================================
+   g->triArea  = (double *) malloc(sizeof(double)*g->numTriangle);
+   g->quadArea = (double *) malloc(sizeof(double)*g->numQuadConn);
+
+   double a,b,c,e,s,p,q,area;
+
+   // compute area of all triangles
+   for (i = 0; i < g->numTriangle; i++)
+   {
+      n1 = g->triConn[3*i    ];
+      n2 = g->triConn[3*i + 1];
+      n3 = g->triConn[3*i + 2];
+
+      a = (g->allNodePos[3*n1  ] - g->allNodePos[3*n2  ])*
+          (g->allNodePos[3*n1  ] - g->allNodePos[3*n2  ]) + 
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n2+1])*
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n2+1]) + 
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n2+2])*
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n2+2]);
+      a = sqrt(a);
+
+      b = (g->allNodePos[3*n1  ] - g->allNodePos[3*n3  ])*
+          (g->allNodePos[3*n1  ] - g->allNodePos[3*n3  ]) + 
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n3+1])*
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n3+1]) + 
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n3+2])*
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n3+2]);
+      b = sqrt(b);
+
+      c = (g->allNodePos[3*n3  ] - g->allNodePos[3*n2  ])*
+          (g->allNodePos[3*n3  ] - g->allNodePos[3*n2  ]) + 
+          (g->allNodePos[3*n3+1] - g->allNodePos[3*n2+1])*
+          (g->allNodePos[3*n3+1] - g->allNodePos[3*n2+1]) + 
+          (g->allNodePos[3*n3+2] - g->allNodePos[3*n2+2])*
+          (g->allNodePos[3*n3+2] - g->allNodePos[3*n2+2]);
+      c = sqrt(c);
+
+      // semiperimeter
+      s = 0.5*(a+b+c);
+
+      g->triArea[i] = sqrt(s*(s-a)*(s-b)*(s-c));
+
+   } // i loop
+
+   // compute area of quadrilaterals
+   for (i = 0; i < g->numQuadConn; i++)
+   {
+      n1 = g->quadConn[i][0];
+      n2 = g->quadConn[i][1];
+      n3 = g->quadConn[i][2];
+      n4 = g->quadConn[i][3];
+
+      a = (g->allNodePos[3*n1  ] - g->allNodePos[3*n2  ])*
+          (g->allNodePos[3*n1  ] - g->allNodePos[3*n2  ]) + 
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n2+1])*
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n2+1]) + 
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n2+2])*
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n2+2]);
+      a = sqrt(a);
+
+      b = (g->allNodePos[3*n2  ] - g->allNodePos[3*n3  ])*
+          (g->allNodePos[3*n2  ] - g->allNodePos[3*n3  ]) + 
+          (g->allNodePos[3*n2+1] - g->allNodePos[3*n3+1])*
+          (g->allNodePos[3*n2+1] - g->allNodePos[3*n3+1]) + 
+          (g->allNodePos[3*n2+2] - g->allNodePos[3*n3+2])*
+          (g->allNodePos[3*n2+2] - g->allNodePos[3*n3+2]);
+      b = sqrt(b);
+
+      c = (g->allNodePos[3*n3  ] - g->allNodePos[3*n4  ])*
+          (g->allNodePos[3*n3  ] - g->allNodePos[3*n4  ]) + 
+          (g->allNodePos[3*n3+1] - g->allNodePos[3*n4+1])*
+          (g->allNodePos[3*n3+1] - g->allNodePos[3*n4+1]) + 
+          (g->allNodePos[3*n3+2] - g->allNodePos[3*n4+2])*
+          (g->allNodePos[3*n3+2] - g->allNodePos[3*n4+2]);
+      c = sqrt(c);
+
+      e = (g->allNodePos[3*n4  ] - g->allNodePos[3*n1  ])*
+          (g->allNodePos[3*n4  ] - g->allNodePos[3*n1  ]) + 
+          (g->allNodePos[3*n4+1] - g->allNodePos[3*n1+1])*
+          (g->allNodePos[3*n4+1] - g->allNodePos[3*n1+1]) + 
+          (g->allNodePos[3*n4+2] - g->allNodePos[3*n1+2])*
+          (g->allNodePos[3*n4+2] - g->allNodePos[3*n1+2]);
+      e = sqrt(e);
+
+      p = (g->allNodePos[3*n1  ] - g->allNodePos[3*n3  ])*
+          (g->allNodePos[3*n1  ] - g->allNodePos[3*n3  ]) + 
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n3+1])*
+          (g->allNodePos[3*n1+1] - g->allNodePos[3*n3+1]) + 
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n3+2])*
+          (g->allNodePos[3*n1+2] - g->allNodePos[3*n3+2]);
+      p = sqrt(p);
+
+      // q = (g->allNodePos[3*n2  ] - g->allNodePos[3*n4  ])*
+      //     (g->allNodePos[3*n2  ] - g->allNodePos[3*n4  ]) + 
+      //     (g->allNodePos[3*n2+1] - g->allNodePos[3*n4+1])*
+      //     (g->allNodePos[3*n2+1] - g->allNodePos[3*n4+1]) + 
+      //     (g->allNodePos[3*n2+2] - g->allNodePos[3*n4+2])*
+      //     (g->allNodePos[3*n2+2] - g->allNodePos[3*n4+2]);
+      // q = sqrt(q);      
+
+
+      s = 0.5*(a+b+p);
+
+      g->quadArea[i] = sqrt(s*(s-a)*(s-b)*(s-p));
+
+      s = 0.5*(c+e+p);
+
+      g->quadArea[i] += sqrt(s*(s-c)*(s-e)*(s-p));
+
+
+      g->cellSizeRatio[i] = 3.0*pow4*g->quadArea[i]
+                          /(g->triArea[g->quad2triList[i]]);
+
+   } // i loop
+
+   // write cell quality information for histogram
+   strcpy(fileID,folderName);
+   strcat(fileID,"cellsize.dat");
+   fptr = fopen(fileID,"w");
+   for (i = 0; i < g->numQuadConn; i++)
+      fprintf(fptr,"%lf \n",g->cellSizeRatio[i]);
+
+   fclose(fptr);
+
+
 
 }
 
@@ -199,8 +336,10 @@ void outputMeshQuality(GRID *g)
 {
 
    int   i;
-   FILE *fptr;
-   fptr = fopen("./output/statistics.dat","w");
+   char  fileID[250];
+   strcpy(fileID,folderName);
+   strcat(fileID,"statistics.dat");
+   FILE *fptr = fopen(fileID,"w");
 
    fprintf(fptr,"#####################################################################\n");
    fprintf(fptr,"#                                                                   #\n");

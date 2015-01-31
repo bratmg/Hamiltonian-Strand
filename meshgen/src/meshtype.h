@@ -7,6 +7,8 @@
 #ifndef MESHTYPE_H
 #define MESHTYPE_H
 
+// #include <process.h>
+// #include <dir.h>
 
 // ==================================================================
 typedef struct LOOP
@@ -45,6 +47,7 @@ typedef struct GRID
 
    int     *triConn;       // connectivity data for the triangles
    double  *nodePosTri;    // coordinates of the nodes [x,y,z. ordered data]
+   double  *nodeNormal; // outward normal vectors of the nodes
 
    int     *tri2nodeList;  // contains the list of triangles for every node
    int     *tri2nodeIndex; // contains the indexing of the list
@@ -76,6 +79,7 @@ typedef struct GRID
    int      numQuadConn;   // number of quadconn elements
    int      numOctFace;    // total number of cells in 3d
    int    **quadConn;      // connectivity data for quadrilaterals
+   int     *quad2triList;  // which quad belongs to which original triangle
    int    **quadEdge;      // array for qEdges
    int    **octFace;       // array for oct cell faces
 
@@ -95,6 +99,7 @@ typedef struct GRID
    int     *numMeshSkew;   // number of cells of each skewness type
    int    **meshSkewnessID;// skewness of the meshes
    double  *meshSkewness;  // skewness of the meshes
+   double  *cellSizeRatio; // ratio of quad area to original triangle”
 
    // expansion to sub dividing quads
    int      quadLevel;     // division level of quads
@@ -102,6 +107,18 @@ typedef struct GRID
    int      nVertPerSide;  // number of new vertices along a triangular edge
    int      nIntPts;       // additional interior points per triangle
    int     *midEdgeID;     // edge ID for the DO, EO and FO edge for triangle 
+
+   // edge mapping for smoothing at triangular level
+   int      numTriQuadEdge;// number of edges at triangular level
+   int    **triQuadEdge;   // connectivity for tri edge, mid points and centroid
+
+   // area of triangle and quadrilateral
+   double  *triArea;       // area of triangle
+   double  *quadArea;      // area of quadrilateral
+
+   // for domain partitioning
+   int      boundaryCount; // number of edges sharing a domain
+   int     *boundaryID;    // boundary ID for inter-domain boundary
 
    // experimental
    double  *triNodeWeight; // weights for the triangular nodes

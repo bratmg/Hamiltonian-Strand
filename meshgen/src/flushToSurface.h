@@ -9,8 +9,11 @@
 #define FLUSH_TO_SURFACE_H
 
 void moveToBoundary(double *ptLeft, double *ptRight, 
-                    double * pt, char * surfaceID);
+                    double * pt, double *normal, char * surfaceID);
 
+void robinSurface(double *pt);
+
+void createRobinData(void);
 
 #endif
 // ##################################################################

@@ -174,6 +174,63 @@ void computeNormals(GRID *g)
       g->strandGrid[i].normal[2]*=dist;
 
    }
+
+   if(strcmp(surfaceType,"sphere")==0)
+   {
+      for (i = 0; i < g->numQuadConn; i++)
+      {
+         node1     = g->quadConn[i][0]; node2 = g->quadConn[i][1];
+         node3     = g->quadConn[i][2]; node4 = g->quadConn[i][3];
+
+         norm[0]   = g->allNodePos[3*node1  ];
+         norm[1]   = g->allNodePos[3*node1+1];
+         norm[2]   = g->allNodePos[3*node1+2];
+
+         dist = norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2];
+         dist = 1./sqrt(dist);
+
+         g->strandGrid[node1].normal[0] = dist*norm[0];
+         g->strandGrid[node1].normal[1] = dist*norm[1];
+         g->strandGrid[node1].normal[2] = dist*norm[2];
+
+         norm[0]   = g->allNodePos[3*node2  ];
+         norm[1]   = g->allNodePos[3*node2+1];
+         norm[2]   = g->allNodePos[3*node2+2];
+
+         dist = norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2];
+         dist = 1./sqrt(dist);
+
+         g->strandGrid[node2].normal[0] = dist*norm[0];
+         g->strandGrid[node2].normal[1] = dist*norm[1];
+         g->strandGrid[node2].normal[2] = dist*norm[2];
+
+         norm[0]   = g->allNodePos[3*node3  ];
+         norm[1]   = g->allNodePos[3*node3+1];
+         norm[2]   = g->allNodePos[3*node3+2];
+
+         dist = norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2];
+         dist = 1./sqrt(dist);
+
+         g->strandGrid[node3].normal[0] = dist*norm[0];
+         g->strandGrid[node3].normal[1] = dist*norm[1];
+         g->strandGrid[node3].normal[2] = dist*norm[2];
+
+         norm[0]   = g->allNodePos[3*node4  ];
+         norm[1]   = g->allNodePos[3*node4+1];
+         norm[2]   = g->allNodePos[3*node4+2];
+
+         dist = norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2];
+         dist = 1./sqrt(dist);
+
+         g->strandGrid[node4].normal[0] = dist*norm[0];
+         g->strandGrid[node4].normal[1] = dist*norm[1];
+         g->strandGrid[node4].normal[2] = dist*norm[2];
+
+      }
+
+
+   }
+
 }
 // #################################################################
 //

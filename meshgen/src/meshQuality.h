@@ -9,9 +9,9 @@
 
 #include "meshtype.h"
 
-void meshQuality(GRID *g);
+void meshQuality(int gridID, GRID *g);
 
-void checkQuality(GRID *g);
+void checkQuality(int gridID, GRID *g);
 
 void outputMeshQuality(GRID *g);
 

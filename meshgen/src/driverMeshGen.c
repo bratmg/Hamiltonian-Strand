@@ -13,6 +13,7 @@
 #include "loopsAndCells.h"
 #include "smoothOperations.h"
 #include "memoryOperations.h"
+#include "subdivision.h"
 
 // ##################################################################
 // begin main program
@@ -31,6 +32,10 @@ int main()
    // loop through grids
    for (i = 0; i < nGrid; i++)
    {
+
+   	// create output folder to store data in
+   	createOutputFolder(i);
+
       // create list of triangles containing a given node
       createTriangleList(&g[i]);
 
@@ -56,16 +61,25 @@ int main()
       quadLoops(&g[i]);
 
       // smoothing
-      smoothGrid(&g[i],numSmooth);
-      
+      if(0)
+      {
+      	smoothGrid(&g[i],numSmooth);
+		}
+		else
+		{
+			smoothTriangleGrid(&g[i],numSmooth);
+      	recreateVerticesOnEdge(&g[i]);
+      	recreateInteriorVertices(&g[i]);
+		}
+
       // create strand template
       if(iStrand) createStrands(&g[i]);
 
       // check quality and output statistics
-      meshQuality(&g[i]);
+      meshQuality(i,&g[i]);
       
       // write tecplot outputs
-      writeTecplot(&g[i]);
+      writeTecplot(i,&g[i]);
 
    }
 

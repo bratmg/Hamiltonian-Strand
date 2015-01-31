@@ -9,15 +9,19 @@
 
 #include "meshtype.h"
 
-void addVerticesOnEdge(const double *posA, const double *posB,
-   double *posVert, const int iSurface,
-   const int nVert, const double deltaDist);
-
-void computeNodeWeights(GRID *g);
+void addVerticesOnEdge(const double *posA, 
+                       const double *posB,
+                             double *posVert, 
+                       const double *normalA,
+                       const double *normalB,
+                             double *normalVert,
+                       const    int  iSurface,
+                       const    int  nVert, 
+                       const double  deltaDist);
 
 void smoothGrid(GRID *g, const int msweep);
 
-void smoothLoops(GRID *g);
+void smoothTriangleGrid(GRID *g, const int msweep);
 
 void smoothTriEdge(GRID *g);
 
