@@ -5,7 +5,7 @@
 #####################################################################
 
 CC      = gcc
-CFLAGS  =  -w -g #-O2# -traceback #  -fbounds-check -fbacktrace  #-g #-traceback  -check uninit  #-warn-all#-g #-O2 #-g
+CFLAGS  =  -w -g -pg #-O2# -traceback #  -fbounds-check -fbacktrace  #-g #-traceback  -check uninit  #-warn-all#-g #-O2 #-g
 LFLAGS  = $(CFLAGS) -lm
 SRCDIR = ./src
 OBJECTS = $(SRCDIR)/globalVariables.o \
@@ -19,6 +19,7 @@ OBJECTS = $(SRCDIR)/globalVariables.o \
           $(SRCDIR)/strand.o \
           $(SRCDIR)/memoryOperations.o \
           $(SRCDIR)/meshQuality.o \
+          $(SRCDIR)/subdivision.o \
           $(SRCDIR)/driverMeshGen.o
 
 # Link Instruction
