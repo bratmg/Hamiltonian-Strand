@@ -1,0 +1,25 @@
+#####################################################################
+#                                                                   #
+# DESCRIPTION OF CERTAIN INPUT FILES                                #
+#                                                                   #
+#####################################################################
+Code written by Bharath Govindarajan (bharath@umd.edu)
+
+ - The folder contain 'coord__.dat' (triangle node points) and
+  'conn__.dat' (triangle connectivity information) files of
+   certain geometries.
+ - To be used in 'input.meshgen'
+
+ Input files
+-------------
+ NACA         - NACA 0012 airfoil
+ Robin_Coarse - Robin fuselage coarse grid
+ Robin_Fine   - Robin fuselage fine grid
+ SphereLVL0   - Geodesic grid of sphere ( 20 triangle sphere)
+ SphereLVL1   - Geodesic grid of sphere ( 80 triangle sphere)
+ SphereLVL2   - Geodesic grid of sphere ( 320 triangle sphere)
+ SphereLVL3   - Geodesic grid of sphere (1280 triangle sphere)
+
+#####################################################################
+# END OF FILE                                                       #
+#####################################################################
