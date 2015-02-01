@@ -270,6 +270,11 @@ void smoothTriangleGrid(GRID *g, const int msweep)
    // set all iflag and nodeCount for all nodes to 0
    for (i = 0; i < g->numNodePos; i++) iflag[i]=nodeCount[i]=0;
 
+   // additional condition for robin
+   if (strcmp(surfaceType,"robin")==0)
+   {
+      for (i = 0; i < g->numTriNode; i++) iflag[i]=1;
+   }
    // loop through all the faces (i.e., edges)
    for (i = 0; i < g->numTriQuadEdge; i++)
    {

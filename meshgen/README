@@ -11,8 +11,8 @@ make
 
 Test case:
 ----------
-- Currently 'input.meshgen' file configured to generate the mesh for
-  NACA 0012 airfoil at quad-level 2
+- Currently 'input.meshgen' file configured to generate the surface 
+  mesh for Robin fuselage at quad-level 1
 - ./meshgen
 
 Provided scripts:
@@ -30,11 +30,11 @@ Provided scripts:
 
 To view results:
 ----------------
-- All results are stored in './output/' as .dat or .tecdat files
+- All results are stored in './output/domain___' as .dat or .tecdat files
   - .dat files are those needed by the solver 
   - .tecdat are files used by 'preplot.sh' and are converted to '.plt'
-    and stored in './output/preplot/' from where they can be visualized
-- The file './output/statistics.dat' contains preliminary statistics
+    and stored in './output/domain___/preplot/' from where they can be visualized
+- The file './output/domain___/statistics.dat' contains preliminary statistics
   about the mesh and loops
 
 Input files:

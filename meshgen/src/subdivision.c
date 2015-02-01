@@ -324,7 +324,8 @@ void recreateInteriorVertices(GRID * g)
          index   = g->numTriNode + g->nVertPerSide*edgeID[j]
                  + halfVertm1;
 
-         if(strcmp(surfaceType,"sphere")==0)
+         if(strcmp(surfaceType,"sphere")==0 ||
+            strcmp(surfaceType,"robin")==0 )
             iSurface = 1;
          else 
             iSurface = 0;
@@ -478,7 +479,8 @@ void recreateInteriorVertices(GRID * g)
                   //tempPos[3*ktemp5+k] = g->allNodePos[3*ktemp5+k];
 
                } // k loop
-               if(strcmp(surfaceType,"sphere")==0)
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin")==0)
                   moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp5],
                      &g->nodeNormal[3*ktemp5],surfaceType);
 
@@ -701,7 +703,8 @@ void recreateInteriorVertices(GRID * g)
                   //tempPos[3*ktemp5+k] = g->allNodePos[3*ktemp5+k];
 
                } // k loop
-               if(strcmp(surfaceType,"sphere")==0)
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin") == 0)
                   moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp6],
                      &g->nodeNormal[3*ktemp6],surfaceType);
 

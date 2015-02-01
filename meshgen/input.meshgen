@@ -3,14 +3,14 @@
 // Input file for mesh generation routine
 //
 // ##################################################################
-num grid      = 2
-node file     = ./input/subdomain/naca/coord
-conn file     = ./input/subdomain/naca/conn
-normalfile    = ./input/normalRobintest
+num grid      = 1
+node file     = ./input/coordRobin_Coarse
+conn file     = ./input/connRobin_Coarse
+normalfile    = ./input/normalRobin_Coarse
 boundary file = ./input/subdomain/naca/boundary
-flush surface = naca
+flush surface = robin
 quad level    = 1
-num smooth    = 200
+num smooth    = 20
 if strands    = 0
 strand layers = 10
 init spacing  = 0.05
@@ -21,17 +21,22 @@ mesh growth   = 1.1
 // ##################################################################
  - 'num grid'  - number of grids
 
- - 'node file' - triangular coordinate data file.
+ - 'node file' - triangular coordinate data file 
+   (ignore '.dat' in filename)
 
- - 'conn file' - triangular connectivity data file.
+ - 'conn file' - triangular connectivity data file 
+    (ignore '.dat' in filename)
+
+ - 'normal file' - file containing the local normals at the node
+    points (ignore '.dat' in the filename)
  
  - 'boundary file' - subdomain boundary file. used only in case
     of mesh partitioning.
 
  - 'flush surface' - surface onto which newly added points have
-   to be flushed to. Current options are 'naca' and 'sphere'. If 
-   using any other file, ensure that this field is set to anything
-   BUT 'naca' or 'sphere', say 'none'.
+   to be flushed to. Current options are {'naca','sphere','robin'}.
+   If using any other file, ensure that this field is set to anything
+   BUT 'naca', 'sphere' or 'robin' --- use 'none'.
  
  - 'quad level' - level of division of the quad cells. Default to 1.
  

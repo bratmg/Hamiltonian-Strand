@@ -198,7 +198,7 @@ void moveToBoundary(double *ptLeft, double *ptRight,
          }
          counter++;
       }
-      // printf("done.. eps (%e), counter(%d)\n",eps,counter );
+      //printf("done.. eps (%e), counter(%d)\n",eps,counter );
       // traces(stopping in flush.);exit(1);
       pt[0] = ptTemp[0];
       pt[1] = ptTemp[1];
