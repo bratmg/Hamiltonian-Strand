@@ -1,18 +1,16 @@
 // ##################################################################
 //
-// colouringAlgorithm.h
-// 
-// Header file that contains the colouring algorithms
+// loopsAndCells.h
+//
+// Header file for routines related to the generation of 
+// triangular/quad loops and quad cells
 // ##################################################################
-#ifndef COLOURING_ALGORITHM_H
-#define COLOURING_ALGORITHM_H
+#ifndef LOOPS_AND_CELLS_H
+#define LOOPS_AND_CELLS_H
 
-#include "meshtype.h"
-#include "globalVariables.h"
+void triCellAndVertexLoops(GRID *g);
 
-void greedyColouringAlgorithm(GRID *g);
-
-int findMinMax(const int *array, const int size, const char *option);
+void quadLoops(GRID *g);
 
 #endif
 // ##################################################################

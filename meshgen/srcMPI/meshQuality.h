@@ -1,18 +1,19 @@
 // ##################################################################
 //
-// colouringAlgorithm.h
-// 
-// Header file that contains the colouring algorithms
+// meshQuality.h
+//
+// Header file for routines related to checking mesh quality
 // ##################################################################
-#ifndef COLOURING_ALGORITHM_H
-#define COLOURING_ALGORITHM_H
+#ifndef MESH_QUALITY_H
+#define MESH_QUALITY_H
 
 #include "meshtype.h"
-#include "globalVariables.h"
 
-void greedyColouringAlgorithm(GRID *g);
+void meshQuality(int gridID, GRID *g);
 
-int findMinMax(const int *array, const int size, const char *option);
+void checkQuality(int gridID, GRID *g);
+
+void outputMeshQuality(GRID *g);
 
 #endif
 // ##################################################################

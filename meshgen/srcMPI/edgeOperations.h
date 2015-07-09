@@ -1,18 +1,21 @@
 // ##################################################################
 //
-// colouringAlgorithm.h
+// edgeOperations.h
 // 
-// Header file that contains the colouring algorithms
+// Header files for all edge operations
 // ##################################################################
-#ifndef COLOURING_ALGORITHM_H
-#define COLOURING_ALGORITHM_H
+#ifndef EDGE_OPERATIONS_H
+#define EDGE_OPERATIONS_H
 
 #include "meshtype.h"
-#include "globalVariables.h"
 
-void greedyColouringAlgorithm(GRID *g);
+void findTriangleEdges(GRID *g);
 
-int findMinMax(const int *array, const int size, const char *option);
+void createVerticesOnEdge(GRID *g);
+
+void createInteriorVertices(GRID *g);
+
+void subdomainEdgeBlanking(GRID *g);
 
 #endif
 // ##################################################################

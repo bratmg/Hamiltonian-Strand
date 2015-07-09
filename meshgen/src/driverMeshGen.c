@@ -6,7 +6,9 @@
 // ##################################################################
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include "meshtype.h"
 #include "IO.h"
 #include "globalVariables.h"
 #include "listOperations.h"
@@ -21,7 +23,7 @@
 int main()
 {
 
-   int i;
+   int i,j;
 
    // welcome
    welcome();
@@ -29,7 +31,9 @@ int main()
 	// read inputs
    readInputs();
 
+   //
    // loop through grids
+   //
    for (i = 0; i < nGrid; i++)
    {
 
@@ -57,15 +61,32 @@ int main()
       // create quad cells
       createInteriorVertices(&g[i]);
 
+   }
+
+   //
+   // loop through the hybrid grids and patch 
+   // information to the regular grids
+   //
+   if(iHybrid)
+   {
+      for (i = 0; i < nHGrid; i++) meshPatching(&h[i]);
+   }
+   
+   //
+   // loop through grids
+   //
+   for (i = 0; i < nGrid; i++)
+   {
+
       // find quad loops
       quadLoops(&g[i]);
 
       // smoothing
-      if(0)
+      if(strcmp(smoothTechnique,"lagrangian")==0)
       {
       	smoothGrid(&g[i],numSmooth);
 		}
-		else
+		else if(strcmp(smoothTechnique,"blend")==0)
 		{
 			smoothTriangleGrid(&g[i],numSmooth);
       	recreateVerticesOnEdge(&g[i]);
@@ -80,7 +101,6 @@ int main()
       
       // write tecplot outputs
       writeTecplot(i,&g[i]);
-
    }
 
    //thanks

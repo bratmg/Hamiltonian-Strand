@@ -7,16 +7,21 @@
 #ifndef STRAND_H
 #define STRAND_H
 
-void createStrands(GRID *g);
+#include "meshtype.h"
 
-void createStrandTemplate(GRID *g);
+void createStrands(int gridID, GRID *g);
 
-void computeNormals(GRID *g);
+void createStrandTemplate(int gridID, GRID *g);
 
-void averageNormals(GRID *g);
+void computeNormals(int gridID, GRID *g);
 
-void updateVariables(GRID *g);
+void computeNormals_MPI(int gridID);
 
+void averageNormals(int gridID, GRID *g);
+
+void averageNormals_MPI(int gridID);
+
+void updateVariables(int gridID, GRID *g);
 
 #endif
 // ##################################################################

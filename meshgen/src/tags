@@ -1,0 +1,213 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+COLOURING_ALGORITHM_H	colouringAlgorithm.h	8;"	d
+COLOUR_CHAR_MAX	colouringAlgorithm.c	13;"	d	file:
+EDGE	meshtype.h	/^typedef struct EDGE$/;"	s
+EDGE	meshtype.h	/^} EDGE;$/;"	t	typeref:struct:EDGE
+EDGE_OPERATIONS_H	edgeOperations.h	8;"	d
+EPS	hybridOperations.c	14;"	d	file:
+FLUSH_TO_SURFACE_H	flushToSurface.h	9;"	d
+GLOBAL_VARIABLES_H	globalVariables.h	8;"	d
+GRID	meshtype.h	/^typedef struct GRID$/;"	s
+GRID	meshtype.h	/^} GRID;$/;"	t	typeref:struct:GRID
+HGRID	meshtype.h	/^typedef struct HGRID$/;"	s
+HGRID	meshtype.h	/^} HGRID;$/;"	t	typeref:struct:HGRID
+HYBRIDOPERATIONS_H	hybridOperations.h	9;"	d
+ID	meshtype.h	/^   int  *ID;      \/\/ 4\/6 element format for each edge$/;"	m	struct:EDGE
+ID	meshtype.h	/^   int *ID;     \/\/ list of vertices\/cells (their ID) in the loop$/;"	m	struct:LOOP
+INDX	edgeOperations.c	19;"	d	file:
+INDX	flushToSurface.c	15;"	d	file:
+INV90	meshQuality.c	17;"	d	file:
+IO_H	IO.h	8;"	d
+LIST_OPERATIONS_H	listOperations.h	7;"	d
+LOOP	meshtype.h	/^typedef struct LOOP$/;"	s
+LOOP	meshtype.h	/^} LOOP;$/;"	t	typeref:struct:LOOP
+LOOPS_AND_CELLS_H	loopsAndCells.h	9;"	d
+MAX	meshtype.h	194;"	d
+MEMORY_OPERATIONS_H	memoryOperations.h	8;"	d
+MESHTYPE_H	meshtype.h	8;"	d
+MESH_QUALITY_H	meshQuality.h	8;"	d
+MIN	meshtype.h	193;"	d
+NBINS	meshQuality.c	14;"	d	file:
+NC	colouringAlgorithm.c	14;"	d	file:
+N_CELL_FACE	strand.c	15;"	d	file:
+N_EDGE	meshtype.h	10;"	d
+N_EDGE	subdivision.c	18;"	d	file:
+N_QEDGE	meshtype.h	11;"	d
+N_QEDGE	subdivision.c	19;"	d	file:
+ONE_THIRD	meshtype.h	12;"	d
+ONE_THIRD	subdivision.c	20;"	d	file:
+PI	meshQuality.c	15;"	d	file:
+R2D	meshQuality.c	16;"	d	file:
+SIGN	meshtype.h	196;"	d
+SMOOTH_OPERATIONS_H	smoothOperations.h	8;"	d
+STRAND	meshtype.h	/^typedef struct STRAND$/;"	s
+STRAND	meshtype.h	/^} STRAND;$/;"	t	typeref:struct:STRAND
+STRAND_H	strand.h	8;"	d
+SUBDIVISION_H	subdivision.h	8;"	d
+SWAP	meshtype.h	195;"	d
+addVerticesOnEdge	smoothOperations.c	/^void addVerticesOnEdge(const double *posA,      $/;"	f
+allNodePos	meshtype.h	/^   double  *allNodePos;        \/\/ node position of all points in a single array$/;"	m	struct:GRID
+averageNormals	strand.c	/^void averageNormals(GRID *g)$/;"	f
+boundaryCount	meshtype.h	/^   int      boundaryCount;     \/\/ number of edges sharing a domain$/;"	m	struct:GRID
+boundaryEdgeDomain	meshtype.h	/^   int     *boundaryEdgeDomain;$/;"	m	struct:GRID
+boundaryID	meshtype.h	/^   int     *boundaryID;        \/\/ boundary ID for inter-domain boundary$/;"	m	struct:GRID
+boundaryNodeDomain	meshtype.h	/^   int     *boundaryNodeDomain;$/;"	m	struct:GRID
+boundaryTriNode	meshtype.h	/^   int     *boundaryTriNode;    \/\/ node ID of boundary nodes on ham mesh$/;"	m	struct:GRID
+cellLoop	meshtype.h	/^   LOOP    *cellLoop;          \/\/ loop across all cells (every layer and strand)$/;"	m	struct:GRID
+cellNodePos	meshtype.h	/^   double  *cellNodePos;       \/\/ node position of all points (if strand)$/;"	m	struct:GRID
+cellSizeRatio	meshtype.h	/^   double  *cellSizeRatio;     \/\/ ratio of quad area to original triangle”$/;"	m	struct:GRID
+checkQuality	meshQuality.c	/^void checkQuality(int gridID, GRID *g)$/;"	f
+colourChar	meshtype.h	/^   char    *colourChar;        \/\/ character array for the colours$/;"	m	struct:GRID
+colourID	meshtype.h	/^   int     *colourID;          \/\/ contains the colour ID form colourChar for each node$/;"	m	struct:GRID
+colourIndex	meshtype.h	/^   int     *colourIndex;       \/\/ node ID associated with the colour (mapped to colourID)$/;"	m	struct:GRID
+computeNodeWeights	unusedRoutines.c	/^void computeNodeWeights(GRID *g)$/;"	f
+computeNormals	strand.c	/^void computeNormals(GRID *g)$/;"	f
+connStride	meshtype.h	/^   int      connStride;$/;"	m	struct:HGRID
+createEdgeList	listOperations.c	/^void createEdgeList(GRID *g)$/;"	f
+createInteriorVertices	edgeOperations.c	/^void createInteriorVertices(GRID * g)$/;"	f
+createOutputFolder	IO.c	/^void createOutputFolder(int gridID)$/;"	f
+createRobinData	flushToSurface.c	/^void createRobinData()$/;"	f
+createStrandTemplate	strand.c	/^void createStrandTemplate(GRID *g)$/;"	f
+createStrands	strand.c	/^void createStrands(GRID *g)$/;"	f
+createTriangleList	listOperations.c	/^void createTriangleList(GRID *g)$/;"	f
+createVerticesOnEdge	edgeOperations.c	/^void createVerticesOnEdge(GRID *g)$/;"	f
+edge2triIndex	meshtype.h	/^   int     *edge2triIndex;     \/\/ contains the indexing of the list$/;"	m	struct:GRID
+edge2triList	meshtype.h	/^   int     *edge2triList;      \/\/ contains the list of triangles for every edge$/;"	m	struct:GRID
+edgeStride	meshtype.h	/^   int      edgeStride;$/;"	m	struct:HGRID
+edgesub	meshtype.h	/^   int    *edgesub; \/\/ corresponding edge ID on Ham domain$/;"	m	struct:HGRID
+findMinMax	colouringAlgorithm.c	/^int findMinMax(const int *array, const int size, const char *option)$/;"	f
+findTriangleEdges	edgeOperations.c	/^void findTriangleEdges(GRID *g)$/;"	f
+findValue	hybridOperations.c	/^void findValue(const int *array, const int n, const int val, int *nodeID)$/;"	f
+flagalter	meshtype.h	/^   int     *flagalter;      $/;"	m	struct:GRID
+folderName	globalVariables.c	/^char    folderName[250];\/\/ folder for the subdomain$/;"	v
+freeMem	memoryOperations.c	/^void freeMem(GRID *g)$/;"	f
+g	globalVariables.c	/^GRID   *g;              \/\/ pointer to grid$/;"	v
+greedyColouringAlgorithm	colouringAlgorithm.c	/^void greedyColouringAlgorithm(GRID *g)$/;"	f
+h	globalVariables.c	/^HGRID  *h;              \/\/ pointer to hybrid grid$/;"	v
+iBoundary	meshtype.h	/^   int     *iBoundary;         \/\/ index for if boundary node$/;"	m	struct:GRID
+iHybPeriodic	globalVariables.c	/^int     iHybPeriodic;   \/\/ yes\/no periodic BC for structured grid$/;"	v
+iHybrid	globalVariables.c	/^int     iHybrid;        \/\/ if hybrid grid exists$/;"	v
+iStrand	globalVariables.c	/^int     iStrand;        \/\/ are strand grids required$/;"	v
+index	meshtype.h	/^   int *index;  \/\/ identified start and end indices of loops $/;"	m	struct:LOOP
+initMeshLen	meshtype.h	/^   double   initMeshLen;       \/\/ size of the first cell$/;"	m	struct:GRID
+iqloop3	meshtype.h	/^   int     *iqloop3;$/;"	m	struct:GRID
+isBoundaryTriNode	meshtype.h	/^   int     *isBoundaryTriNode;  \/\/ if node is boundary triangular node on ham mesh$/;"	m	struct:GRID
+main	driverMeshGen.c	/^int main()$/;"	f
+maxCol	meshtype.h	/^   int      maxCol;            \/\/ maximum number of colours$/;"	m	struct:GRID
+maxLen	meshtype.h	/^   int  maxLen; \/\/ maximum length of any single loop$/;"	m	struct:LOOP
+meshGrowth	meshtype.h	/^   double   meshGrowth;        \/\/ mesh spacing for strand grids$/;"	m	struct:GRID
+meshPatching	hybridOperations.c	/^void meshPatching(HGRID *h)$/;"	f
+meshQuality	meshQuality.c	/^void meshQuality(int gridID, GRID *g)$/;"	f
+meshSkewness	meshtype.h	/^   double  *meshSkewness;      \/\/ skewness of the meshes$/;"	m	struct:GRID
+meshSkewnessID	meshtype.h	/^   int    **meshSkewnessID;    \/\/ skewness of the meshes$/;"	m	struct:GRID
+midEdgeID	meshtype.h	/^   int     *midEdgeID;         \/\/ edge ID for the DO, EO and FO edge for triangle $/;"	m	struct:GRID
+moveToBoundary	flushToSurface.c	/^void moveToBoundary(double *ptLeft, double *ptRight, $/;"	f
+nEdgePerSide	meshtype.h	/^   int      nEdgePerSide;      \/\/ number of quad edges along a triangular edge$/;"	m	struct:GRID
+nEta	meshtype.h	/^   int      nEta;$/;"	m	struct:GRID
+nEta	meshtype.h	/^   int     nEta; \/\/ number of nodes in the wall-normal direction$/;"	m	struct:HGRID
+nGrid	globalVariables.c	/^int     nGrid;          \/\/ total number of grids$/;"	v
+nHGrid	globalVariables.c	/^int     nHGrid;         \/\/ number of hybrid grids$/;"	v
+nIntPts	meshtype.h	/^   int      nIntPts;           \/\/ additional interior points per triangle$/;"	m	struct:GRID
+nPsi	meshtype.h	/^   int      nPsi;$/;"	m	struct:GRID
+nPsi	meshtype.h	/^   int     nPsi; \/\/ number of nodes in the wrap around direction$/;"	m	struct:HGRID
+nVertPerSide	meshtype.h	/^   int      nVertPerSide;      \/\/ number of new vertices along a triangular edge$/;"	m	struct:GRID
+niqloops	meshtype.h	/^   int      niqloops;$/;"	m	struct:GRID
+nloops	meshtype.h	/^   int      nloops;$/;"	m	struct:GRID
+nodeNormal	meshtype.h	/^   double  *nodeNormal;        \/\/ outward normal vectors of the nodes$/;"	m	struct:GRID
+nodePos	meshtype.h	/^   double *nodePos; \/\/ position of the nodes$/;"	m	struct:HGRID
+nodePosTri	meshtype.h	/^   double  *nodePosTri;        \/\/ coordinates of the nodes [x,y,z. ordered data]$/;"	m	struct:GRID
+nodeStride	meshtype.h	/^   int      nodeStride;$/;"	m	struct:HGRID
+nodesub	meshtype.h	/^   int    *nodesub; \/\/ corresponding node ID on Ham domain$/;"	m	struct:HGRID
+normal	meshtype.h	/^   double  normal[3]; \/\/ normal direction of the strand$/;"	m	struct:STRAND
+numBoundaryEdges	meshtype.h	/^   int      numBoundaryEdges;$/;"	m	struct:GRID
+numBoundaryEdges	meshtype.h	/^   int     numBoundaryEdges; \/\/ number of boundary edges$/;"	m	struct:HGRID
+numBoundaryNodes	meshtype.h	/^   int      numBoundaryNodes;$/;"	m	struct:GRID
+numBoundaryTriNode	meshtype.h	/^   int      numBoundaryTriNode; \/\/ number of triangular nodes on boundary$/;"	m	struct:GRID
+numCol	meshtype.h	/^   int     *numCol;            \/\/ number of nodes of a particular colour$/;"	m	struct:GRID
+numEdge	meshtype.h	/^   int   numEdge; \/\/ total number of triangular edges $/;"	m	struct:EDGE
+numHamNode	meshtype.h	/^   int      numHamNode;        \/\/ total number of nodes only in hamiltonian mesh$/;"	m	struct:GRID
+numMeshSkew	meshtype.h	/^   int     *numMeshSkew;       \/\/ number of cells of each skewness type$/;"	m	struct:GRID
+numNodePos	meshtype.h	/^   int      numNodePos;        \/\/ total number of points$/;"	m	struct:GRID
+numOctFace	meshtype.h	/^   int      numOctFace;        \/\/ total number of cells in 3d$/;"	m	struct:GRID
+numQuadConn	meshtype.h	/^   int      numQuadConn;       \/\/ number of quadconn elements$/;"	m	struct:GRID
+numQuadConn	meshtype.h	/^   int      numQuadConn;   \/\/ number of quadconn elements$/;"	m	struct:HGRID
+numQuadConnHam	meshtype.h	/^   int      numQuadConnHam;    \/\/ number of quadconn elements (ham mesh)$/;"	m	struct:GRID
+numQuadConnStruct	meshtype.h	/^   int      numQuadConnStruct; \/\/ number of quadconn elements (structured mesh)$/;"	m	struct:GRID
+numQuadEdge	meshtype.h	/^   int      numQuadEdge;       \/\/ total number of quad edges$/;"	m	struct:GRID
+numQuadEdge	meshtype.h	/^   int      numQuadEdge;   \/\/ total number of quad edges$/;"	m	struct:HGRID
+numQuadEdgeHam	meshtype.h	/^   int      numQuadEdgeHam;    \/\/ total number of quad edges (ham mesh)$/;"	m	struct:GRID
+numQuadEdgeStruct	meshtype.h	/^   int      numQuadEdgeStruct; \/\/ total number of quad edges (structured mesh)$/;"	m	struct:GRID
+numQuadEdgeT	meshtype.h	/^   int      numQuadEdgeT;      \/\/ total number of quad edges (temp)$/;"	m	struct:GRID
+numSmooth	globalVariables.c	/^int     numSmooth;      \/\/ number of smoothing passes on the mesh$/;"	v
+numStrandLayer	meshtype.h	/^   int      numStrandLayer;    \/\/ total number of strand layers$/;"	m	struct:GRID
+numStructNode	meshtype.h	/^   int      numStructNode;     \/\/ total number of nodes only in structured mesh$/;"	m	struct:GRID
+numTriEdge	meshtype.h	/^   int     numTriEdge;         \/\/ number of triangle edges$/;"	m	struct:GRID
+numTriNode	meshtype.h	/^   int      numTriNode;        \/\/ original triangular nodes$/;"	m	struct:GRID
+numTriQuadEdge	meshtype.h	/^   int      numTriQuadEdge;    \/\/ number of edges at triangular level$/;"	m	struct:GRID
+numTriangle	meshtype.h	/^   int      numTriangle;       \/\/ total number of triangles$/;"	m	struct:GRID
+octFace	meshtype.h	/^   int    **octFace;           \/\/ array for oct cell faces$/;"	m	struct:GRID
+outputMeshQuality	meshQuality.c	/^void outputMeshQuality(GRID *g)$/;"	f
+pos	meshtype.h	/^   double *pos;       \/\/ [x,y,z] position along a strand$/;"	m	struct:STRAND
+pow2	globalVariables.c	/^int     pow2;           \/\/ 2^(quadlevel)$/;"	v
+pow4	globalVariables.c	/^int     pow4;           \/\/ 4^(quadlevel)$/;"	v
+q3loop	meshtype.h	/^   int     *q3loop;$/;"	m	struct:GRID
+qLevel	globalVariables.c	/^int     qLevel;         \/\/ quad level of subdivision$/;"	v
+quad2triList	meshtype.h	/^   int     *quad2triList;      \/\/ which quad belongs to which original triangle$/;"	m	struct:GRID
+quadArea	meshtype.h	/^   double  *quadArea;          \/\/ area of quadrilateral$/;"	m	struct:GRID
+quadConn	meshtype.h	/^   int    **quadConn;          \/\/ connectivity data for quadrilaterals$/;"	m	struct:GRID
+quadConn	meshtype.h	/^   int    **quadConn;      \/\/ connectivity data for quadrilaterals$/;"	m	struct:HGRID
+quadEdge	meshtype.h	/^   int    **quadEdge;          \/\/ array for qEdges$/;"	m	struct:GRID
+quadEdge	meshtype.h	/^   int    **quadEdge;      \/\/ array for qEdges$/;"	m	struct:HGRID
+quadLevel	meshtype.h	/^   int      quadLevel;         \/\/ division level of quads$/;"	m	struct:GRID
+quadLoop	meshtype.h	/^   LOOP    *quadLoop;          \/\/ loop for the quadrilateral loops around a node$/;"	m	struct:GRID
+quadLoops	loopsAndCells.c	/^void quadLoops(GRID *g)$/;"	f
+rc	globalVariables.c	/^double *rc; \/\/ robin c,d,e,f$/;"	v
+rd	globalVariables.c	/^double *rd;$/;"	v
+re	globalVariables.c	/^double *re;$/;"	v
+readInputs	IO.c	/^void readInputs()$/;"	f
+recreateInteriorVertices	subdivision.c	/^void recreateInteriorVertices(GRID * g)$/;"	f
+recreateVerticesOnEdge	subdivision.c	/^void recreateVerticesOnEdge(GRID *g)$/;"	f
+reverseList	listOperations.c	/^void reverseList(int *list1,$/;"	f
+rf	globalVariables.c	/^double *rf;$/;"	v
+robinSurface	flushToSurface.c	/^void robinSurface(double *pt)$/;"	f
+smoothGrid	smoothOperations.c	/^void smoothGrid(GRID *g, const int msweep)$/;"	f
+smoothLoops	unusedRoutines.c	/^void smoothLoops(GRID *g)$/;"	f
+smoothTechnique	globalVariables.c	/^char    smoothTechnique[20]; \/\/ blend or lagrangian$/;"	v
+smoothTriEdge	smoothOperations.c	/^void smoothTriEdge(GRID *g)$/;"	f
+smoothTriangleGrid	smoothOperations.c	/^void smoothTriangleGrid(GRID *g, const int msweep)$/;"	f
+strandGrid	meshtype.h	/^   STRAND  *strandGrid;        \/\/ strand grids of type strand$/;"	m	struct:GRID
+strandLoop	meshtype.h	/^   LOOP    *strandLoop;        \/\/ "loop" for the various strands$/;"	m	struct:GRID
+subdomainEdgeBlanking	edgeOperations.c	/^void subdomainEdgeBlanking(GRID *g)$/;"	f
+surfNodePos	meshtype.h	/^   double  *surfNodePos;       \/\/ node positions of all points on a surface$/;"	m	struct:GRID
+surfaceType	globalVariables.c	/^char    surfaceType[20];\/\/ type of surface to flush the newly formed points to$/;"	v
+templateDist	meshtype.h	/^   double  *templateDist;      \/\/ grid locations on the strand template   $/;"	m	struct:GRID
+thanks	IO.c	/^void thanks()$/;"	f
+totLen	meshtype.h	/^   int  totLen; \/\/ total length of all loops$/;"	m	struct:LOOP
+trace	meshtype.h	190;"	d
+tracef	meshtype.h	189;"	d
+traces	meshtype.h	191;"	d
+tri2nodeIndex	meshtype.h	/^   int     *tri2nodeIndex;     \/\/ contains the indexing of the list$/;"	m	struct:GRID
+tri2nodeList	meshtype.h	/^   int     *tri2nodeList;      \/\/ contains the list of triangles for every node$/;"	m	struct:GRID
+triArea	meshtype.h	/^   double  *triArea;           \/\/ area of triangle$/;"	m	struct:GRID
+triCellAndVertexLoops	loopsAndCells.c	/^void triCellAndVertexLoops(GRID *g)$/;"	f
+triConn	meshtype.h	/^   int     *triConn;           \/\/ connectivity data for the triangles$/;"	m	struct:GRID
+triEdge	meshtype.h	/^	int   **triEdge;            \/\/ possible array for triangle edge$/;"	m	struct:GRID
+triLoop	meshtype.h	/^	LOOP    *triLoop;           \/\/ loop for triangles around a node$/;"	m	struct:GRID
+triNodeWeight	meshtype.h	/^   double  *triNodeWeight;     \/\/ weights for the triangular nodes$/;"	m	struct:GRID
+triQuadEdge	meshtype.h	/^   int    **triQuadEdge;       \/\/ connectivity for tri edge, mid points and centroid$/;"	m	struct:GRID
+updateVariables	strand.c	/^void updateVariables(GRID *g)$/;"	f
+vert1Loop	meshtype.h	/^   LOOP    *vert1Loop;         \/\/ vertex loops for the inner and outer$/;"	m	struct:GRID
+vert2Loop	meshtype.h	/^   LOOP    *vert2Loop;         \/\/ loops of a given node (used for smoothing)$/;"	m	struct:GRID
+vert3Loop	meshtype.h	/^   LOOP    *vert3Loop;         \/\/ middle loop$/;"	m	struct:GRID
+vertLoop	meshtype.h	/^	LOOP    *vertLoop;          \/\/ loop for the vertices around a node$/;"	m	struct:GRID
+welcome	IO.c	/^void welcome()$/;"	f
+writeTecplot	IO.c	/^void writeTecplot(int gridID, GRID *g)$/;"	f
+writearrayDUB	IO.c	/^void writearrayDUB(const double *array, const int n)$/;"	f
+writearrayINT	IO.c	/^void writearrayINT(const int *array, const int n)$/;"	f
+writemultiarrayDUB	IO.c	/^void writemultiarrayDUB(const double **array, const int m, const int n)$/;"	f
+writemultiarrayINT	IO.c	/^void writemultiarrayINT(const int **array, const int m, const int n)$/;"	f

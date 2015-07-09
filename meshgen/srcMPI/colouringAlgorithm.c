@@ -81,24 +81,12 @@ void greedyColouringAlgorithm(GRID *g)
 
    } // i loop
 
-   //
-   // include extra colour for body-fitted loops (hybrid mesh)
-   //
-   if(iHybrid) g->maxCol++;
-
    // initialize numCol
    g->numCol = (int *) malloc(sizeof(int)*(g->maxCol+1));
 
    kk = 0;
-
-   int maxvalue;
-   if(iHybrid) 
-      maxvalue = g->maxCol-1;
-   else
-      maxvalue = g->maxCol;
-
    // loop through all the nodes
-   for (j = 0; j <= maxvalue; j++)
+   for (j = 0; j <= g->maxCol; j++)
    {
       k = 0;   
       for (i = 0; i < g->numTriNode; i++)      
@@ -115,16 +103,7 @@ void greedyColouringAlgorithm(GRID *g)
       g->numCol[j] = k;      
    }
 
-   //
-   // append g->numcol for hybrid meshes
-   //
-   if(iHybrid)
-   {
-      g->numCol[g->maxCol] = h[0].nEta-1;
-   }
-
-
-    // writearrayINT(g->numCol,g->maxCol+1);
+ //  writearrayINT(g->numCol,g->numTriNode);
 }
 
 

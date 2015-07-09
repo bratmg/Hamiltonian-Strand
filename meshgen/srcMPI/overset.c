@@ -1,24 +1,12 @@
 // ##################################################################
 //
-// strand.h
-// 
-// Header files that contain the routines for strand grids
+// overset.c
+//
+// List of routines used for oversetting topology with TIOGA
 // ##################################################################
-#ifndef STRAND_H
-#define STRAND_H
-
-void createStrands(GRID *g);
-
-void createStrandTemplate(GRID *g);
-
-void computeNormals(GRID *g);
-
-void averageNormals(GRID *g);
-
-void updateVariables(GRID *g);
+#include "overset.h"
 
 
-#endif
 // ##################################################################
 // END OF FILE
 // ##################################################################

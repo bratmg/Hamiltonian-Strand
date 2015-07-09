@@ -8,7 +8,6 @@
 #define COLOURING_ALGORITHM_H
 
 #include "meshtype.h"
-#include "globalVariables.h"
 
 void greedyColouringAlgorithm(GRID *g);
 

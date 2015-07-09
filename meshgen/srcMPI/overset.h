@@ -1,18 +1,13 @@
 // ##################################################################
 //
-// colouringAlgorithm.h
-// 
-// Header file that contains the colouring algorithms
+// overset.h
+//
+// List of routines used for oversetting topology with TIOGA
 // ##################################################################
-#ifndef COLOURING_ALGORITHM_H
-#define COLOURING_ALGORITHM_H
+#ifndef OVERSET_H
+#define OVERSET_H
 
 #include "meshtype.h"
-#include "globalVariables.h"
-
-void greedyColouringAlgorithm(GRID *g);
-
-int findMinMax(const int *array, const int size, const char *option);
 
 #endif
 // ##################################################################

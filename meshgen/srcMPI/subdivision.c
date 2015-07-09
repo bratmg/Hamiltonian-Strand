@@ -75,12 +75,12 @@ void recreateVerticesOnEdge(GRID *g)
       }
 
       // Is this a domain specific condition. Must check.
-      if ( strcmp(surfaceType,"naca")==0 && iHybrid != 1
+      if ( strcmp(surfaceType,"naca")==0
             && (g->triEdge[i][3]==-1) 
             && (abs(posA[1])<0.61) && (abs(posA[0])<1.1) )
          iSurface = 1;                  
-      else if ((strcmp(surfaceType,"sphere")==0 ||
-               strcmp(surfaceType,"robin") ==0 ) && iHybrid != 1)
+      else if (strcmp(surfaceType,"sphere")==0 ||
+               strcmp(surfaceType,"robin") ==0 )
          iSurface = 1;
       else
          iSurface = 0;      
@@ -324,8 +324,8 @@ void recreateInteriorVertices(GRID * g)
          index   = g->numTriNode + g->nVertPerSide*edgeID[j]
                  + halfVertm1;
 
-         if((strcmp(surfaceType,"sphere")==0 ||
-            strcmp(surfaceType,"robin")==0 ) && iHybrid != 1)
+         if(strcmp(surfaceType,"sphere")==0 ||
+            strcmp(surfaceType,"robin")==0 )
             iSurface = 1;
          else 
             iSurface = 0;
@@ -479,8 +479,8 @@ void recreateInteriorVertices(GRID * g)
                   //tempPos[3*ktemp5+k] = g->allNodePos[3*ktemp5+k];
 
                } // k loop
-               if((strcmp(surfaceType,"sphere")==0 ||
-                  strcmp(surfaceType,"robin")==0) && iHybrid != 1)
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin")==0)
                   moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp5],
                      &g->nodeNormal[3*ktemp5],surfaceType);
 
@@ -703,8 +703,8 @@ void recreateInteriorVertices(GRID * g)
                   //tempPos[3*ktemp5+k] = g->allNodePos[3*ktemp5+k];
 
                } // k loop
-               if((strcmp(surfaceType,"sphere")==0 ||
-                  strcmp(surfaceType,"robin") == 0) && iHybrid != 1)
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin") == 0)
                   moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp6],
                      &g->nodeNormal[3*ktemp6],surfaceType);
 
@@ -729,12 +729,11 @@ void recreateInteriorVertices(GRID * g)
    for (i = 0; i < threenum; i++)
       g->allNodePos[i] = weight*tempPos[i] + (1.-weight)*g->allNodePos[i];
 
-
    //
    // Re-flush the points onto the surface of the sphere
    //
    if((strcmp(surfaceType,"sphere")==0 ||
-      strcmp(surfaceType,"robin") == 0) && iHybrid != 1)
+      strcmp(surfaceType,"robin") == 0))
    {
       for (i = 0; i < g->numNodePos; i++)
       {

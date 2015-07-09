@@ -15,6 +15,10 @@
 #include "smoothOperations.h"
 #include "edgeOperations.h"
 
+#define N_EDGE 4
+#define N_QEDGE 6
+#define ONE_THIRD 0.3333333333333333
+
 
 #define INDX( row, col, ld) ( row*ld + col )
 // ##################################################################
@@ -149,26 +153,11 @@ void findTriangleEdges(GRID *g)
    // Although separate arrays are created for each, it is important to 
    // consolidate all node points into one as the loop indexing is based on
    // the single array   
-   
-   g->numHamNode = g->numTriNode 
+   g->numNodePos = g->numTriNode 
                  + g->nVertPerSide*g->numTriEdge 
                  + g->numTriangle*(3*halfVertm1 + 1 + 3*halfVertm1*halfVertm1);
-
-   g->numNodePos = g->numHamNode;
-
-
-   // add nodes for those belonging to the hybrid section if it exists
-   // NOTE: h.nPsi has not yet been redefined! This redefinition happens
-   //       in meshPatching, which is called AFTER edgeOperations
-   if(iHybrid)
-   {  
-      g->numStructNode  = (4*qLevel*(h[0].nPsi-1) + 1)*h[0].nEta;
-      g->numNodePos    += g->numStructNode;
-   }
-
    g->allNodePos  = (double *) malloc(sizeof(double)*3*g->numNodePos);
    g->surfNodePos = (double *) malloc(sizeof(double)*3*g->numNodePos);
-
 
    // append original node points
    j = 0;
@@ -216,34 +205,13 @@ void createVerticesOnEdge(GRID *g)
    // allocate
    int n = g->nEdgePerSide*g->numTriEdge// + 25*g->numTriangle;
          + g->numTriangle*(3*halfEdgePerSide + 3*(2*halfVertm1*halfEdgePerSide));
-
-   g->numQuadEdgeHam = n;
-   g->numQuadEdge    = n;
-   //
-   // if hybrid grid exists, add the number of edges from hybrid mesh
-   //
-   if (iHybrid)
-   {
-      if (nGrid > 1)
-      {
-         printf("Not yet extended to multiple grids. Stopping.\n");
-         exit(1);
-      }
-
-      int temp = 4*qLevel*(h[0].nPsi-1) + 1;
-      g->numQuadEdgeStruct = h[0].nEta*(temp-1) + (h[0].nEta-1)*temp;
-      g->numQuadEdge += g->numQuadEdgeStruct;
-
-   }
-
-   g->quadEdge = (int **) malloc(sizeof(int *)*g->numQuadEdge);
-   for (i = 0; i < g->numQuadEdge; i++)
+   g->quadEdge = (int **) malloc(sizeof(int *)*n);
+   for (i = 0; i < n; i++)
       g->quadEdge[i] = (int *) malloc(sizeof(int)*(N_QEDGE));
 
-   for (i = 0; i < g->numQuadEdge; i++)
+   for (i = 0; i < n; i++)
       for (j = 0; j < N_QEDGE; j++)
          g->quadEdge[i][j] = -1;
-
 
    // create unique cells ID for edges that border a subdomain
    if (nGrid > 1) subdomainEdgeBlanking(g);
@@ -278,12 +246,12 @@ void createVerticesOnEdge(GRID *g)
       }
 
       // Is this a domain specific condition. Must check.
-      if ( strcmp(surfaceType,"naca")==0 && iHybrid != 1
+      if ( strcmp(surfaceType,"naca")==0 
             && (g->triEdge[i][3]==-1) 
             && (abs(posA[1])<0.61) && (abs(posA[0])<1.1) )
          iSurface = 1;                  
-      else if ((strcmp(surfaceType,"sphere")==0 ||
-               strcmp(surfaceType,"robin")==0 ) && iHybrid != 1)
+      else if (strcmp(surfaceType,"sphere")==0 ||
+               strcmp(surfaceType,"robin")==0 )
          iSurface = 1;
       else
          iSurface = 0;      
@@ -355,11 +323,9 @@ void createVerticesOnEdge(GRID *g)
 
    // total number fo elements in Q 
    // (hopefully lesser than 4*nEt + 18*nt)
-   // g->numQuadEdgeHam = k2;
-   // g->numQuadEdge    = k2;
+   g->numQuadEdge = k2;
 
    free(posVert);
-
 
 
    // for (i = 0 ; i < k2; i++)
@@ -422,35 +388,20 @@ void createInteriorVertices(GRID * g)
    cc = 0.5;
 
    n = 3*pow4*g->numTriangle;
-   g->numQuadConnHam = n;
-   g->numQuadConn    = n;
+   g->numQuadConn = n;
 
-
-
-   if (iHybrid)
-   {
-      if(nGrid>1)
-      {
-         printf("Code not yet extended to handle multiple grids. Stopping\n");
-         exit(1);
-      }
-      g->numQuadConnStruct = (h[0].nEta-1)*(4*qLevel*(h[0].nPsi-1));
-      g->numQuadConn      += g->numQuadConnStruct;
-
-   }
-      
    // ===============================================================
    // Allocations
    // ===============================================================
 
-   g->quadConn     = (int **) malloc(sizeof(int *)*g->numQuadConn);
-   g->quad2triList = (int *) malloc(sizeof(int)*g->numQuadConnHam);
+   g->quadConn     = (int **) malloc(sizeof(int *)*n);
+   g->quad2triList = (int *) malloc(sizeof(int)*n);
 
-   for (i = 0; i < g->numQuadConn; i++)
+   for (i = 0; i < n; i++)
       g->quadConn[i]     = (int *) malloc(sizeof(int)*(N_EDGE));
    
    // initialize quadConn
-   for (i = 0; i < g->numQuadConn; i++)
+   for (i = 0; i < n; i++)
       for (j = 0; j < N_EDGE; j++)      
          g->quadConn[i][j] = 0;
 
@@ -784,8 +735,8 @@ void createInteriorVertices(GRID * g)
       }
 
       // flush point O to surface (only if sphere)
-      if((strcmp(surfaceType,"sphere")==0 ||
-         strcmp(surfaceType,"robin") ==0 ) && iHybrid != 1)
+      if(strcmp(surfaceType,"sphere")==0 ||
+         strcmp(surfaceType,"robin") ==0 )
       {
          moveToBoundary(dummy1,dummy2,&g->allNodePos[3*iO],
             &g->nodeNormal[3*iO],surfaceType);
@@ -830,7 +781,7 @@ void createInteriorVertices(GRID * g)
          index   = g->numTriNode + g->nVertPerSide*edgeID[j]
                  + halfVertm1;
 
-         if(strcmp(surfaceType,"sphere")==0 && iHybrid != 1 )
+         if(strcmp(surfaceType,"sphere")==0)
             iSurface = 1;
          else 
             iSurface = 0;
@@ -1038,8 +989,8 @@ void createInteriorVertices(GRID * g)
                                   - g->nodeNormal[3*index1+k]);
 
                } // k loop
-               if((strcmp(surfaceType,"sphere")==0 ||
-                  strcmp(surfaceType,"robin")==0) && iHybrid != 1)
+               if(strcmp(surfaceType,"sphere")==0 ||
+                  strcmp(surfaceType,"robin")==0)
                   moveToBoundary(dummy1,dummy2,&g->allNodePos[3*ktemp5]
                      ,&g->nodeNormal[3*ktemp5],surfaceType);
 
@@ -1194,21 +1145,20 @@ void createInteriorVertices(GRID * g)
 
 	} // i loop (g->numTriangle)
 
-   g->numQuadEdgeT  = g->numQuadEdgeHam;// g->numQuadEdge; // temp variable used in loopsAndCells
-   // g->numQuadEdge   = k3;//18*g->numTriangle;
-   
-   //printf("\nREMOVED SWAPPING! NEED TO REINSTATE THIS CONDITION!\n\n");
-   // for (i = 0; i < g->numQuadEdge; i++)
-   // {
+   g->numQuadEdgeT  = g->numQuadEdge; // temp variable used in loopsAndCells
+   g->numQuadEdge   = k3;
 
-   //    if (g->quadEdge[i][2] == -1 || g->quadEdge[i][2] == -5)
-   //    {
-   //       SWAP(g->quadEdge[i][0],g->quadEdge[i][1]);
-   //       SWAP(g->quadEdge[i][2],g->quadEdge[i][3]);
-   //       SWAP(g->quadEdge[i][4],g->quadEdge[i][5]);
-   //    }
+   for (i = 0; i < g->numQuadEdge; i++)
+   {
 
-   // }
+      if (g->quadEdge[i][2] == -1 || g->quadEdge[i][2] == -5)
+      {
+         SWAP(g->quadEdge[i][0],g->quadEdge[i][1]);
+         SWAP(g->quadEdge[i][2],g->quadEdge[i][3]);
+         SWAP(g->quadEdge[i][4],g->quadEdge[i][5]);
+      }
+
+   }
 
 }
 

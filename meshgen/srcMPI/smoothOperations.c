@@ -89,7 +89,7 @@ void smoothGrid(GRID *g, const int msweep)
    for (i = 0; i < g->numNodePos; i++) iflag[i]=nodeCount[i]=0;
 
    // additional condition for robin
-   if (strcmp(surfaceType,"robin")==0 && iHybrid != 1)
+   if (strcmp(surfaceType,"robin")==0)
    {
       for (i = 0; i < g->numTriNode; i++) iflag[i]=1;
    }
@@ -123,18 +123,9 @@ void smoothGrid(GRID *g, const int msweep)
          iflag[node2] = 1;
       }
 
+
+
    }
-
-   //
-   // Additionally, if hybrid grids are present set iflag = 1
-   // for all nodes belonging to structured part
-   //
-   if (iHybrid)
-   {
-      for (i = g->numHamNode; i < g->numNodePos; i++)
-         iflag[i] = 1;
-   } // if hybrid
-
    // indx is a double pointer. So allocate memory for the
    // first level of pointer
    for (i = 0; i < g->numNodePos; i++)
@@ -157,6 +148,8 @@ void smoothGrid(GRID *g, const int msweep)
       indx[node2][nodeCount[node2]] = node1;
       nodeCount[node2]++;
    }
+
+
 
    // ===============================================================
    // Smoothing procedure
@@ -205,8 +198,8 @@ void smoothGrid(GRID *g, const int msweep)
       norm=0.0;
 
       // Perform smoothing if neccessary
-      if ((strcmp(surfaceType,"sphere")==0 || 
-          strcmp(surfaceType,"robin" )==0) && iHybrid != 1 )
+      if (strcmp(surfaceType,"sphere")==0 || 
+          strcmp(surfaceType,"robin" )==0)
       {
          for (i = 0; i < g->numNodePos; i++)
             moveToBoundary(dummy1,dummy2,&x1[3*i],
@@ -277,7 +270,7 @@ void smoothTriangleGrid(GRID *g, const int msweep)
    for (i = 0; i < g->numNodePos; i++) iflag[i]=nodeCount[i]=0;
 
    // additional condition for robin
-   if (strcmp(surfaceType,"robin")==0 && iHybrid != 1)
+   if (strcmp(surfaceType,"robin")==0)
    {
       for (i = 0; i < g->numTriNode; i++) iflag[i]=1;
    }
@@ -391,8 +384,8 @@ void smoothTriangleGrid(GRID *g, const int msweep)
       norm=0.0;
 
       // Perform smoothing if neccessary
-      if ((strcmp(surfaceType,"sphere")==0 ||
-          strcmp(surfaceType,"robin")==0) && iHybrid != 1)
+      if (strcmp(surfaceType,"sphere")==0 ||
+          strcmp(surfaceType,"robin")==0)
       {
          for (i = 0; i < g->numNodePos; i++)
             moveToBoundary(dummy1,dummy2,&x1[3*i],

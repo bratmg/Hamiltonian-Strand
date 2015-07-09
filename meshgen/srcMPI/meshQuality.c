@@ -43,23 +43,18 @@ void checkQuality(int gridID, GRID *g)
    // Cell aspect ratio
    // ===============================================================
 
-   printf("\nMesh quality not written for structured mesh yet.\n\n");
-
-   int nQConn = g->numQuadConnHam;
-
-
-   g->meshSkewness    = (double *) malloc(sizeof(double)*nQConn);
-   g->cellSizeRatio   = (double *) malloc(sizeof(double)*nQConn);
+   g->meshSkewness    = (double *) malloc(sizeof(double)*g->numQuadConn);
+   g->cellSizeRatio   = (double *) malloc(sizeof(double)*g->numQuadConn);
    g->numMeshSkew     = (int *)    malloc(sizeof(int)*NBINS);
-   g->meshSkewnessID  = (int **)   malloc(sizeof(int *)*nQConn);
+   g->meshSkewnessID  = (int **)   malloc(sizeof(int *)*g->numQuadConn);
 
    for (i = 0; i < NBINS; i++)
    {
-      g->meshSkewnessID[i] = (int *) malloc(sizeof(int)*nQConn);
+      g->meshSkewnessID[i] = (int *) malloc(sizeof(int)*g->numQuadConn);
       g->numMeshSkew[i]    = 0;
    }
 
-   for (i = 0; i < nQConn; i++)
+   for (i = 0; i < g->numQuadConn; i++)
    {
       // node IDs
       n1 = g->quadConn[i][0];
@@ -191,7 +186,7 @@ void checkQuality(int gridID, GRID *g)
    strcpy(fileID,folderName);
    strcat(fileID,"histogram.dat");
    fptr = fopen(fileID,"w");
-   for (i = 0; i < nQConn; i++)
+   for (i = 0; i < g->numQuadConn; i++)
       fprintf(fptr,"%lf \n",g->meshSkewness[i]);
 
    fclose(fptr);
@@ -202,7 +197,7 @@ void checkQuality(int gridID, GRID *g)
    // which it was formed)
    // ===============================================================
    g->triArea  = (double *) malloc(sizeof(double)*g->numTriangle);
-   g->quadArea = (double *) malloc(sizeof(double)*nQConn);
+   g->quadArea = (double *) malloc(sizeof(double)*g->numQuadConn);
 
    double a,b,c,e,s,p,q,area;
 
@@ -245,7 +240,7 @@ void checkQuality(int gridID, GRID *g)
    } // i loop
 
    // compute area of quadrilaterals
-   for (i = 0; i < nQConn; i++)
+   for (i = 0; i < g->numQuadConn; i++)
    {
       n1 = g->quadConn[i][0];
       n2 = g->quadConn[i][1];
@@ -319,7 +314,7 @@ void checkQuality(int gridID, GRID *g)
    strcpy(fileID,folderName);
    strcat(fileID,"cellsize.dat");
    fptr = fopen(fileID,"w");
-   for (i = 0; i < nQConn; i++)
+   for (i = 0; i < g->numQuadConn; i++)
       fprintf(fptr,"%lf \n",g->cellSizeRatio[i]);
 
    fclose(fptr);

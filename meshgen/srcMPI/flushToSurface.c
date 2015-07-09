@@ -26,20 +26,15 @@ void moveToBoundary(double *ptLeft, double *ptRight,
 
    double xNew, yNew, xtemp;
 
-   double dtemp;
-   dtemp = 0.001444121484573*0.001444121484573;
-
    // ===============================================================
    // For NACA airfoil
    // ===============================================================
    if(strcmp(surfaceID,"naca")==0 || strcmp(surfaceID,"NACA")==0)
    {
-   
+    
+
       x = pt[0];
       y = pt[1];
-
-      if(x < 0.99)
-      {
 
       t = 0.12;
       c = 1.00;
@@ -128,7 +123,7 @@ void moveToBoundary(double *ptLeft, double *ptRight,
          }
 
       }
-      } // if x > 0.99
+      
    }
    // ===============================================================
    // For a sphere

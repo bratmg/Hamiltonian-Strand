@@ -1,18 +1,17 @@
 // ##################################################################
 //
-// colouringAlgorithm.h
+// subdivision.h
 // 
-// Header file that contains the colouring algorithms
+// Header files for subdivision
 // ##################################################################
-#ifndef COLOURING_ALGORITHM_H
-#define COLOURING_ALGORITHM_H
+#ifndef SUBDIVISION_H
+#define SUBDIVISION_H
 
 #include "meshtype.h"
-#include "globalVariables.h"
 
-void greedyColouringAlgorithm(GRID *g);
+void recreateVerticesOnEdge(GRID *g);
 
-int findMinMax(const int *array, const int size, const char *option);
+void recreateInteriorVertices(GRID *g);
 
 #endif
 // ##################################################################

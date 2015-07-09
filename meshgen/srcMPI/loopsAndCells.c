@@ -11,7 +11,6 @@
 #include "globalVariables.h"
 #include "meshtype.h"
 #include "loopsAndCells.h"
-#include "hybridOperations.h"
 
 // ##################################################################
 // 
@@ -275,13 +274,12 @@ void quadLoops(GRID *g)
    
    printf("#meshgen: Creating quadrilateral loops ...\n");
 
-   int i,j,k,ii,jj,kk,kk1;
-   int iA,iB,iC,ncl,is2,tempIdx,offset,node;
+   int i,j,k,ii,jj,kk,kk1,kk2,kk3;
+   int iA,iB,iC,ncl,is2,tempIdx,offset;
    int edgeID[3],edge[2];
    int cell,cell3;
-   int *CL, **qeVec;
+   int *CL, *qeVec1, *qeVec2, *qeVec3, **qeVec;
    int *q1loop, *q2loop, *iqloop, **qloop;
-   int **qeVecH, *nodeall;
 
    // metrics used for edges and vertices
    int numEdgep1       = g->nEdgePerSide+1;
@@ -294,68 +292,41 @@ void quadLoops(GRID *g)
    int edgePerQuad     = horzEdgePerQuad+vertEdgePerQuad;
    int edgePerLine     = halfEdgePerSide;
 
-   // added variables for hybrid meshes
-   int npatch,nEleLoop,stride,patchcounter1,patchcounter2;
-
-   if(iHybrid) nodeall = (int *) malloc(sizeof(int)*(h[0].nPsi-1));
-
    iqloop = (int *) malloc(sizeof(int)*(g->numTriNode+1));
    
    // allocate memory
    CL     = (int *) malloc(sizeof(int)*g->triLoop->maxLen);
    iqloop = (int *) malloc(sizeof(int)*(g->numTriNode+1));
    
-
-   //
    // allocate memory for the loops
-   //
    tempIdx = numEdgep1*g->triLoop->maxLen+1;
    qeVec  = (int **) malloc(sizeof(int *)*pow2);
    for (i = 0; i < pow2; i++)
-   {
       qeVec[i]  = (int *) malloc(sizeof(int)*tempIdx);
+
+   for (i = 0; i < pow2; i++)
       for (j = 0; j < tempIdx; j++)
          qeVec[i][j] = -1;
-   }
+
 
    tempIdx = numEdgep1*g->numTriNode*g->triLoop->maxLen + 1;
-   if(iHybrid) 
-   {
-      tempIdx = numEdgep1*g->numTriNode*
-         (g->triLoop->maxLen + 2*(h[0].nEta-1)) + 1;
-   }
-
    qloop  = (int **) malloc(sizeof(int *)*pow2);
    for (i = 0; i < pow2; i++)
-   {
       qloop[i] = (int *) malloc(sizeof(int)*tempIdx);
+
+   for (i = 0; i < pow2; i++)
       for (j = 0; j < tempIdx; j++)
          qloop[i][j] = -1;
-   }
-    
+
 
    for (i = 0; i < g->numTriNode+1; i++ )
       iqloop[i] =  0;
 
-   if(iHybrid)
-   { 
-      tempIdx = numEdgep1*(g->triLoop->maxLen+2*(h[0].nEta-1))+1;
-      qeVecH  = (int **) malloc(sizeof(int *)*pow2);
-      for (i = 0; i < pow2; i++)
-      {
-         qeVecH[i]  = (int *) malloc(sizeof(int)*tempIdx);
-         for (j = 0; j < tempIdx; j++)
-            qeVecH[i][j] = -1;
-      }
-   }
-   //
    // Running counters for quad loops
-   //
-   kk = 0; kk1 = 0;
+   kk = 0; kk1 = 0; kk2 = 0; kk3 = 0;
 
    //
    // Loop through the total number of nodes
-   //
    for (ii = 0; ii < g->numTriNode; ii++)
    {
       i   = g->colourIndex[ii];         
@@ -391,6 +362,8 @@ void quadLoops(GRID *g)
          // =========================================================
          if (iA == i)
          {
+            // traces( ---------- NODE A -----------);
+            // traces(maybe 3*.. to cell*...);exit(1);
             // Loop through the edges of the triangle
             for (k = 0; k < 3; k++)
             {
@@ -403,6 +376,7 @@ void quadLoops(GRID *g)
                // edge A-B
                if (edge[0] == iA && edge[1] == iB)
                {
+                  // traces(AB);
                   for (jj = 0; jj < pow2; jj++) // number of loops
                      qeVec[jj][numEdgep1*j] = is2 + halfEdgePerSide + jj;
                }
@@ -410,6 +384,7 @@ void quadLoops(GRID *g)
                // edge B-A
                if (edge[0] == iB && edge[1] == iA)
                {
+                  // traces(BA);
                   for (jj = 0; jj < pow2; jj++)
                      qeVec[jj][numEdgep1*j] = is2 + halfEdgePerSide - (jj+1);
                }
@@ -417,6 +392,7 @@ void quadLoops(GRID *g)
                // edge C-A
                if (edge[0] == iC && edge[1] == iA)
                {
+                  // traces(CA);
                   for (jj = 0; jj < pow2; jj++)
                      qeVec[jj][numEdgep1*j + g->nEdgePerSide] = is2 + halfEdgePerSide - (jj+1);
                }
@@ -424,6 +400,7 @@ void quadLoops(GRID *g)
                // edge A-C
                if (edge[0] == iA && edge[1] == iC)
                {
+                  // traces(AC);
                   for (jj = 0; jj < pow2; jj++)
                      qeVec[jj][numEdgep1*j + g->nEdgePerSide] = is2 + halfEdgePerSide + jj;
                }
@@ -469,7 +446,14 @@ void quadLoops(GRID *g)
                      qeVec[jj][numEdgep1*j + (kk+halfVertp2)] = tempIdx;
                   }
 
+                  // if (1)
+                  // {
+                  //    for (kk = 0; kk < numEdgep1; kk++)
+                  //       printf("(%d)(%d) [] %d\n",jj,kk,qeVec[jj][kk]);
+                  // }
+
                } // jj loop
+               // traces(END iA================);               
 
 
             } // k loop
@@ -590,6 +574,7 @@ void quadLoops(GRID *g)
                // edge C-A
                if (edge[0] == iC && edge[1] == iA)
                {
+                  // traces(CA);trace(is2);trace(halfEdgePerSide);
                   for (jj = 0; jj < pow2; jj++) // number of loops
                      qeVec[jj][numEdgep1*j] = is2 + halfEdgePerSide + jj;
                }
@@ -659,8 +644,11 @@ void quadLoops(GRID *g)
                      qeVec[jj][numEdgep1*j + (kk+halfVertp2)] = tempIdx;
                   }
 
+                  // for (kk = 0; kk < numEdgep1; kk++)
+                  //    trace(qeVec[jj][kk]);
 
                }
+               // traces(END iC================);
 
             } // k loop
 
@@ -672,97 +660,7 @@ void quadLoops(GRID *g)
          }
 
       } // j loop
-
-// ==================================================================
-//
-// ADDED PATCH SECTION FOR HYBRID MESHES
-//
-// ==================================================================
-      // for(jj = 0; jj < h[0].nPsi-1; jj++)
-      //    printf("(%d): %d\n",jj,h[0].edgesub[jj] );
-
-   
-      nEleLoop = numEdgep1*ncl;
       
-      if(iHybrid)
-      {
-         
-         npatch   = h[0].nEta - 1;
-
-         if(g->isBoundaryTriNode[i] == 1)
-         {
-            // printf("%lf %lf %lf\n",g->allNodePos[3*i],
-            // g->allNodePos[3*i+1],g->allNodePos[3*i+2] );
-            // loop through chains around a node
-            for (j = 0; j < pow2; j++)
-            {
-               patchcounter1 = patchcounter2 = 1;
-               //
-               // starting section of the loop passing through
-               // the structured grid
-               //
-               findValue(h[0].edgesub,h[0].nPsi-1,qeVec[j][0],nodeall);
-
-               if(nodeall[0] == 0) patchcounter1--;
-
-               // if(nodeall[0] == 0 || nodeall[0] > 1)
-               // {
-               //    printf("nodeall[0]: %d\n",nodeall[0]);
-               //    printf("Something wrong. Check. Stopping.\n");
-               // }
-               
-               // start counter
-               k = 0;
-
-               if(nodeall[0] != 0)
-               {
-                  node = nodeall[1];
-                  for (jj = 0; jj < npatch; jj++)
-                  {
-                     qeVecH[j][k] = jj*(h[0].nPsi-1) + node + h[0].edgeStride;
-                     k++;
-                  } // jj loop
-               } // nodeall != 0
-               //
-               // Loop section passing through the triangles
-               //
-               for (jj = 0; jj < nEleLoop; jj++)
-               {
-                  qeVecH[j][k] = qeVec[j][jj];
-                  k++;
-               } // jj loop
-               //
-               // End section of the loop passing through
-               // the structured grid
-               //
-               findValue(h[0].edgesub,h[0].nPsi-1,qeVec[j][nEleLoop-1],nodeall);
-
-               if(nodeall[0] == 0) patchcounter2--;
-
-               // if(nodeall[0] == 0 || nodeall[0] > 1)
-               // {
-               //    printf("nodeall[0]: %d\n",nodeall[0]);
-               //    printf("Something wrong. Check. Stopping.\n");
-               // }
-
-               // printf("pcounter (%d %d)\n",patchcounter1,patchcounter2 );
-
-               if(nodeall[0] != 0)
-               {
-                  node = nodeall[1];               
-                  for (jj = npatch-1; jj >=0 ; jj--)
-                  {
-                     qeVecH[j][k] = jj*(h[0].nPsi-1) + node + h[0].edgeStride;
-                     k++;
-                  } // jj loop
-               } // nodeall != 0
-
-            } // j loop
-
-         } // if boundaryTriNode loop
-        
-      } // if hybrid loop
-
       // ============================================================
       // Build full quad loops (without repitition)
       // qeVec are local arrays for a given node
@@ -771,31 +669,9 @@ void quadLoops(GRID *g)
       // for both are sifficient as Q1 and Q2 are of the same length
       // ============================================================
 
-      //
+      // ============================================================
       // qloop for the loops
-      //
-
-      //
-      // Beginning section passing through structured mesh
-      //
-      if (iHybrid)
-      {
-         if(g->isBoundaryTriNode[i] == 1 && patchcounter1 == 1)
-         {
-            for (jj = 0; jj < pow2; jj++)
-            {
-               for (j = 0; j < npatch; j++)
-               {  
-                  qloop[jj][kk1 + j] = qeVecH[jj][j];
-                  
-               } // j loop
-            } // jj loop
-            kk1 += npatch;
-         } // if loop
-      } // if hybrid loop
-      //
-      // Loops through the triangles as such
-      //
+      // ============================================================
       for (jj = 0; jj < pow2; jj++) // number of loops
          qloop[jj][kk1] = qeVec[jj][0];
 
@@ -806,71 +682,35 @@ void quadLoops(GRID *g)
             for (k = 1; k < numEdgep1; k++)
             {
                qloop[jj][kk1 + k] = qeVec[jj][numEdgep1*j + k];
-            } // k loop
-         } // jj loop
+               // printf("(%d)(%d) [qloop] %d\n",jj,kk1+k,qloop[jj][kk1+k]);
+            }
+         }
          kk1 += g->nEdgePerSide;
+
       } // jj (number of loops) 
       kk1++;
-      //
-      // Ending section passing through structured mesh
-      //
-      if (iHybrid)
-      {
-         if(g->isBoundaryTriNode[i] == 1 && patchcounter2 == 1)
-         {
-            stride = patchcounter1*npatch + nEleLoop;
-            for (jj = 0; jj < pow2; jj++)
-            {
-               for (j = 0; j < npatch; j++)
-               {  
-                  qloop[jj][kk1 + j] = qeVecH[jj][j + stride];
-               } // j loop
-            } // jj loop
-            kk1 += npatch;
-         } // if loop
-      } // if hybrid loop
+      //traces('stopping here');exit(1);
 
       // start and end index of qloop for a given node
       iqloop[ii+1] = iqloop[ii] + g->nEdgePerSide*ncl + 1;
-      if(iHybrid)
-      {
-         // trace(patchcounter1+patchcounter2);
-         if(g->isBoundaryTriNode[i] == 1)
-            iqloop[ii+1] += (patchcounter1+patchcounter2)*npatch;
-
-            //iqloop[ii+1] += 2*npatch;
-      }
-
-
    } // ii loop
+   // trace(kk1)
    
    // ===============================================================
    // Copy the loops into the quadLoop struct
    // ===============================================================
    int i1,i2,nel;
-   // int nloops,niqloops;
-
-
-   if (iHybrid)
-   {
-      g->nloops   = pow2*kk1 + (h[0].nEta-1)*h[0].nPsi;
-      g->niqloops = pow2*g->numTriNode + 1 + h[0].nEta - 1;
-   }
-   else
-   {
-      g->nloops   = pow2*kk1;
-      g->niqloops = pow2*g->numTriNode + 1;  
-   }
+   int nloops = pow2*kk1;
 
    // allocate memory for quadLoop and initialization
    g->quadLoop = (LOOP *) malloc(sizeof(LOOP));
 
-   g->quadLoop->ID    = (int *) malloc(sizeof(int)*g->nloops);
-   for (i = 0; i < g->nloops; i++)
+   g->quadLoop->ID    = (int *) malloc(sizeof(int)*nloops);
+   for (i = 0; i < nloops; i++)
       g->quadLoop->ID[i] = 0;
 
-   g->quadLoop->index = (int *) malloc(sizeof(int)*(g->niqloops));
-   for (i = 0; i < g->niqloops ; i++)
+   g->quadLoop->index = (int *) malloc(sizeof(int)*(pow2*g->numTriNode+1));
+   for (i = 0; i < 2*g->numTriNode+1 ; i++)
       g->quadLoop->index[i] = 0;
    
    g->quadLoop->maxLen = -1;
@@ -895,6 +735,7 @@ void quadLoops(GRID *g)
          for (j = 0; j < nel; j++)
          {
             g->quadLoop->ID[k+j] = qloop[jj][i1+j];
+            // if(k+j == 519 ) printf("(%d)(%d) [qloop] %d\n",jj,i1+j,qloop[jj][i1+j]);
          }
          k += nel;
 
@@ -903,49 +744,10 @@ void quadLoops(GRID *g)
          kk++;
       }
    }
-   
-// ==================================================================
-//
-// Added loops along the surface of the body (body-fitted)
-//
-// ==================================================================
-   if (iHybrid)
-   {
-      //
-      // stride should account for edge stride and horizontal edges
-      //
-      stride = h[0].edgeStride + h[0].nEta*(h[0].nPsi-1);
-      for (i = 0; i < h[0].nEta-1; i++)
-      {
-         for (j = 0; j < h[0].nPsi-1; j++)
-         {  
-            g->quadLoop->ID[k] = i*h[0].nPsi + j + stride;
-            k++;
-         } // j loop
-
-         // periodic boundary
-         if(iHybPeriodic)
-            g->quadLoop->ID[k] = i*h[0].nPsi + stride;
-         else
-            g->quadLoop->ID[k] = i*h[0].nPsi + h[0].nPsi-1 + stride;
-
-         k++;
-
-         // update IQ loops
-         g->quadLoop->index[kk+1] = g->quadLoop->index[kk] + h[0].nPsi;
-         kk++;
-
-      } // i loop
-      //
-      // recheck max loop length
-      //
-      g->quadLoop->maxLen = MAX(g->quadLoop->maxLen,h[0].nPsi);
-
-   } // if hybrid
-
 
    // set total length of the loops
    g->quadLoop->totLen = k;
+
 }
 
 // ##################################################################
